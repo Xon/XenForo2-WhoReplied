@@ -1,6 +1,0 @@
-{
-    "from_class": "XenForo\\Pub\\Controller\\Thread",
-    "to_class": "SV\\WhoReplied\\XenForo\\Pub\\Controller\\Thread",
-    "execute_order": 10,
-    "active": true
-}
