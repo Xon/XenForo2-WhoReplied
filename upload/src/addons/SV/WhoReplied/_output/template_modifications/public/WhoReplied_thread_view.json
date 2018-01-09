@@ -1,0 +1,9 @@
+{
+    "template": "thread_view",
+    "description": "",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "#(\\s*?)(<xen:hook name=\"thread_view_tools_links\")#i",
+    "replace": "$1\n<xen:if is=\"{$visitor.permissions.forum.whoRepliedView} and {$thread.reply_count} > 0\">\n    <a href=\"{xen:link threads/whoreplied, $thread}\" title=\"{xen:phrase whoreplied_whoreplied}\" class=\"OverlayTrigger\" data-cacheOverlay=\"true\">{xen:phrase whoreplied_whoreplied}</a>\n</xen:if>\n$1$2"
+}

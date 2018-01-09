@@ -1,0 +1,62 @@
+{
+    "option.WhoReplied_usersPerPage.txt": {
+        "global_cache": false,
+        "version_id": 2000000,
+        "version_string": "2.0.0",
+        "hash": "d32438ea0b5fd8eac993b231efd4899d"
+    },
+    "option_WhoReplied_usersPerPage.txt": {
+        "global_cache": false,
+        "version_id": 1050000,
+        "version_string": "1.5.0",
+        "hash": "d32438ea0b5fd8eac993b231efd4899d"
+    },
+    "option_explain.WhoReplied_usersPerPage.txt": {
+        "global_cache": false,
+        "version_id": 1050000,
+        "version_string": "1.5.0",
+        "hash": "d7663dc52f329fdd0b52695b3d5e3207"
+    },
+    "option_group.WhoReplied.txt": {
+        "global_cache": false,
+        "version_id": 1050000,
+        "version_string": "1.5.0",
+        "hash": "bd1c2b82ce5bbb0fd20c8446432f3f99"
+    },
+    "option_group_description.WhoReplied.txt": {
+        "global_cache": false,
+        "version_id": 1050000,
+        "version_string": "1.5.0",
+        "hash": "1f38cb93773d37733856cc1355bc0c3c"
+    },
+    "permission.forum_whoRepliedView.txt": {
+        "global_cache": false,
+        "version_id": 3,
+        "version_string": "1.1.0",
+        "hash": "bab3da338d88f93ebeae049fa139b68d"
+    },
+    "permission_forum_whoRepliedView.txt": {
+        "global_cache": false,
+        "version_id": 3,
+        "version_string": "1.1.0",
+        "hash": "bab3da338d88f93ebeae049fa139b68d"
+    },
+    "whoreplied_members_who_replied.txt": {
+        "global_cache": false,
+        "version_id": 1,
+        "version_string": "1.0.0",
+        "hash": "7f23aa090cae8e06b3c0f09dc62add2a"
+    },
+    "whoreplied_see_posts.txt": {
+        "global_cache": false,
+        "version_id": 3,
+        "version_string": "1.1.0",
+        "hash": "1f7c3964892060cd51c4293e841e1f38"
+    },
+    "whoreplied_whoreplied.txt": {
+        "global_cache": true,
+        "version_id": 1,
+        "version_string": "1.0.0",
+        "hash": "cc644dadd4bf7e9069cb8ab7457e3b54"
+    }
+}
