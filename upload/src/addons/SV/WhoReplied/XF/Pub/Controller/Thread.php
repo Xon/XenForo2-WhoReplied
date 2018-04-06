@@ -11,11 +11,12 @@ class Thread extends XFCP_Thread
 {
 	public function actionWhoReplied(ParameterBag $params)
 	{
-		if (!\XF::visitor()->hasPermission('forum', 'whoRepliedView')) {
+        $threadId = $params->get('thread_id');
+        $thread = $this->assertViewableThread($threadId, $this->getThreadViewExtraWith());
+
+		if (!\XF::visitor()->hasNodePermission($thread->node_id, 'whoRepliedView')) {
 			return $this->noPermission();
 		}
-
-		$threadId = $params->get('thread_id');
 
 		$criteria = $this->filter('criteria', 'array');
 		$order = $this->filter('order', 'str');
@@ -28,7 +29,6 @@ class Thread extends XFCP_Thread
 			'text' => 'str',
 			'prefix' => 'bool'
 		]);
-
 		$searcher = $this->searcher('XF:User', $criteria);
 
 		if ($order && !$direction)
@@ -66,8 +66,6 @@ class Thread extends XFCP_Thread
 		$users = $finder->fetch();
 
 		$this->assertValidPage($page, $perPage, $total, 'thread/who-replied');
-
-		$thread = $this->assertViewableThread($params->thread_id, $this->getThreadViewExtraWith());
 
 
 		$viewParams = [
