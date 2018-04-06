@@ -49,9 +49,8 @@ class Thread extends XFCP_Thread
 				'LIKE',
 				$finder->escapeLike($filter['text'], $filter['prefix'] ? '?%' : '%?%')
 			);
-		} else {
-			$finder->limitByPage($page, $perPage);
 		}
+		$finder->limitByPage($page, $perPage);
 
 		$total = $finder->total();
 		$users = $finder->fetch();
