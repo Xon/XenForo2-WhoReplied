@@ -5,6 +5,7 @@ namespace SV\WhoReplied\XF\Pub\Controller;
 /*
  * Extends \XF\Pub\Controller\Thread
  */
+use XF\Mvc\Entity\FinderExpression;
 use XF\Mvc\ParameterBag;
 
 class Thread extends XFCP_Thread
@@ -20,8 +21,8 @@ class Thread extends XFCP_Thread
 		}
 
 		$criteria = $this->filter('criteria', 'array');
-		$order = $this->filter('order', 'str');
-		$direction = $this->filter('direction', 'str');
+        //$secondaryOrder = $this->filter('order', 'str');
+        //$secondaryDirection = $this->filter('direction', 'str');
 
 		$page = isset($params['page']) ? $params['page'] : 1;
 		$perPage = \XF::options()['WhoReplied_usersPerPage'];
@@ -32,15 +33,10 @@ class Thread extends XFCP_Thread
 		]);
 		$searcher = $this->searcher('XF:User', $criteria);
 
-		if ($order && !$direction)
-		{
-			$direction = $searcher->getRecommendedOrderDirection($order);
-		}
-
-		$searcher->setOrder($order, $direction);
-
 		$finder = $searcher->getFinder();
-        $finder->with("ThreadUserPost|{$threadId}");
+        $finder->with("ThreadUserPost|{$threadId}", true);
+        $finder->order("ThreadUserPost|{$threadId}.post_count", 'DESC');
+        $finder->order('user_id');
 
 		if (strlen($filter['text']))
 		{
@@ -69,9 +65,9 @@ class Thread extends XFCP_Thread
 
 			'criteria' => $searcher->getFilteredCriteria(),
 			'filter' => $filter['text'],
-			'sortOptions' => $searcher->getOrderOptions(),
-			'order' => $order,
-			'direction' => $direction
+			'sortOptions' => [],
+			'order' => '',
+			'direction' => ''
 		];
 		return $this->view('XF:Thread\WhoReplied', 'whoreplied_list', $viewParams);
 	}

@@ -45,9 +45,25 @@
 		</div>
 		<div class="block-container">
 			<div class="block-body userList">
+				<xf:set var="$canSearch" value="{{ $xf.visitor.canSearch() }}" />
 				<xf:foreach loop="$users" key="$userId" value="$user">
 					<li class="block-row block-row--separated userList-row js-filterSearchable">
-						<xf:macro template="member_list_macros" name="item" arg-user="{$user}" />
+						<xf:set var="$extraTemplate">
+							<div class="whoreplied_postcount">
+								<xf:if is="$canSearch">
+									<a href="{{ link('search/search', '', {'users':{$user.username}, 'type':'post', 'thread_id': $thread.thread_id, 'order':'date'}) }}" target="_blank" title="{{ phrase('whoreplied_see_posts') }}">
+										{$user.ThreadUserPost.{$thread.thread_id}.post_count}
+									</a>
+								<xf:else />
+									{$user.ThreadUserPost.{$thread.thread_id}.post_count}
+								</xf:if>
+							</div>
+						</xf:set>
+						<xf:macro template="member_list_macros" 
+								  name="item" 
+								  arg-user="{$user}" 
+								  arg-extraData="1"
+								  arg-extraDataBig="{$extraTemplate}" />
 					</li>
 				</xf:foreach>
 			</div>
