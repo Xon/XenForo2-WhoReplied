@@ -2,13 +2,15 @@
     "legacy_addon_id": "WhoReplied",
     "title": "Who Replied",
     "description": "",
-    "version_id": 2000000,
+    "version_id": 2000070,
     "version_string": "2.0.0",
-    "dev": "",
-    "dev_url": "",
+    "dev": "Xon",
+    "dev_url": "https://atelieraphelion.com",
     "faq_url": "",
     "support_url": "",
     "extra_urls": [],
-    "require": [],
-    "icon": ""
+    "require" : {
+        "php": ["5.6.0", "PHP 5.6.0+"]
+    },
+    "icon": "fa-users"
 }

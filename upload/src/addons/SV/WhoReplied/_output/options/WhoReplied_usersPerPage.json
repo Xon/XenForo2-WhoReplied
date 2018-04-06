@@ -1,6 +1,6 @@
 {
     "edit_format": "spinbox",
-    "edit_format_params": "min=1\nstep=5",
+    "edit_format_params": "min=1",
     "data_type": "positive_integer",
     "sub_options": [],
     "validation_class": "",

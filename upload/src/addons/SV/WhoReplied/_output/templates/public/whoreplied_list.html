@@ -1,59 +1,73 @@
-<xen:title>{xen:helper threadPrefix, $thread, escaped}{$thread.title} - {xen:phrase whoreplied_members_who_replied}{xen:helper pagenumber, $page}</xen:title>
-<xen:h1>{xen:phrase whoreplied_members_who_replied}</xen:h1>
+<xf:js>
+	jQuery.extend(XF.phrases, {
+		no_items_matched_your_filter: "{{ phrase('no_items_matched_your_filter')|escape('js') }}"
+	});
+</xf:js>
 
-<xen:container var="$head.noindex">
-	<meta name="robots" content="noindex" />
-</xen:container>
+<xf:title page="{$page}">{{ prefix('thread', $thread, 'escaped') }}{$thread.title} - {{ phrase('whoreplied_members_who_replied') }}</xf:title>
+<xf:h1>{{ phrase('whoreplied_members_who_replied') }}</xf:h1>
 
-<xen:navigation>
-	<xen:breadcrumb source="$nodeBreadCrumbs" />
-	<xen:breadcrumb href="{xen:link full:forums, $forum}">{$forum.title}</xen:breadcrumb>
-	<xen:breadcrumb href="{xen:link full:threads, $thread}">{xen:helper threadPrefix, $thread}{$thread.title}</xen:breadcrumb>
-</xen:navigation>
+<xf:head option="metaNoindex"><meta name="robots" content="noindex" /></xf:head>
 
-<xen:require css="whoreplied.css" />
-<xen:require js="js/whoreplied/whoreplied.js" />
+<xf:breadcrumb source="{{ $thread.getBreadcrumbs() }}" />
 
-<div class="whoreplied section">
-	<xen:if hascontent="true">
-	<div class="pageNavLinkGroup">
-		<xen:contentcheck><xen:pagenav link="threads/whoreplied" linkdata="{$thread}" page="{$page}" perpage="{$usersPerPage}" total="{$totalUsers}" /></xen:contentcheck>
-	</div>
-	</xen:if>
-	
-	<dl class="subHeading pairsInline"><dt>{xen:phrase thread}:</dt> <dd><a href="{xen:link threads, $thread}">{xen:helper threadPrefix, $thread}{$thread.title}</a></dd></dl>
+<xf:css src="whoreplied.less" />
+<xf:js src="SV/whoreplied/whoreplied.js" />
 
-	<ol class="overlayScroll">
-        <xen:foreach loop="$users" value="$user">
-		<xen:include template="member_list_item">
-		<xen:set var="$guestHtml">{xen:phrase unknown_member}</xen:set>
-		<xen:set var="$contentTemplate">
-			<xen:if is="{$user.canStartConversation}">
-				<a href="{xen:link 'conversations/add', '', 'to={$user.username}'}">
-				{xen:phrase start_conversation}
-				</a>
-			</xen:if>
-		</xen:set>
-        	<xen:set var="$extraTemplate">
-        		<div class="whoreplied_postcount">
-                                <xen:if is="{$canSearch}">
-                                <a href="{xen:link 'search/search', '', 'users={$user.username}', 'type=post', 'thread_id={$thread.thread_id}', 'order=date'}" target="_blank" title="{xen:phrase whoreplied_see_posts}">
-                                    {$user.post_count}
-                                </a>
-                                <xen:else />
-                                    {$user.post_count}
-                                </xen:if>
-    			</div>
-    		</xen:set>
-        </xen:include>
-        </xen:foreach>
-	</ol>
-	
-	<xen:if hascontent="true">
-	<div class="pageNavLinkGroup">
-		<xen:contentcheck><xen:pagenav link="threads/whoreplied" linkdata="{$thread}" page="{$page}" perpage="{$usersPerPage}" total="{$totalUsers}" /></xen:contentcheck>
-	</div>
-	</xen:if>
-	
-	<div class="sectionFooter overlayOnly"><a class="button primary OverlayCloser">{xen:phrase close}</a></div>
+<div class="blockMessage">
+	<dl class="pairs pairs--inline">
+		<dt>{{ phrase('thread') }}</dt>
+		<dd><a href="{{ link('threads', $thread) }}">{{ prefix('thread', $thread, 'escaped') }}{$thread.title}</a></dd>
+	</dl>
 </div>
+
+<xf:form action="" class="block" data-xf-init="who-replied-init">
+	<xf:if is="$users is not empty">
+
+		<div class="block-outer">
+			<div class="block-outer-main">
+				<xf:pagenav page="{$page}"
+							perpage="{$perPage}"
+							total="{$total}"
+							link="threads/who-replied"
+							data="{$thread}"
+							params="{{ {'criteria': $criteria, 'order': $order, 'direction': $direction} }}"
+							wrapperclass="js-filterHide block-outer block-outer--after"
+				/>
+
+			</div>
+			<xf:macro template="whoreplied_filter_macros"
+					  name="quick_filter"
+					  arg-key="users"
+					  arg-ajax="{{ link('threads/who-replied', $thread, {'criteria': $criteria}) }}"
+					  arg-class="block-outer-opposite"
+			/>
+		</div>
+		<div class="block-container">
+			<div class="block-body userList">
+				<xf:foreach loop="$users" key="$userId" value="$user">
+					<li class="block-row block-row--separated userList-row js-filterSearchable">
+						<xf:macro template="member_list_macros" name="item" arg-user="{$user}" />
+					</li>
+				</xf:foreach>
+			</div>
+			<div class="block-footer block-footer--split">
+				<span class="block-footer-counter">{{ display_totals($users, $total) }}</span>
+			</div>
+		</div>
+
+		<xf:pagenav page="{$page}"
+					perpage="{$perPage}"
+					total="{$total}"
+					link="threads/who-replied"
+					data="{$thread}"
+					params="{{ {'criteria': $criteria, 'order': $order, 'direction': $direction} }}"
+					wrapperclass="js-filterHide block-outer block-outer--after"
+		/>
+	<xf:else />
+		<div class="blockMessage">{{ phrase('no_records_matched') }}</div>
+	</xf:if>
+
+	<xf:submitrow submit="{{ phrase('close') }}" rowtype="simple" class="js-overlayClose"/>
+
+</xf:form>

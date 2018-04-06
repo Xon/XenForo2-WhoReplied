@@ -1,0 +1,9 @@
+{
+    "template": "thread_list_macros",
+    "description": "",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "/(<dt>{{ phrase\\('replies'\\) }}<\\/dt>\\s*<dd>)(.*?)(<\\/dd>)/si",
+    "replace": "$1\n<xf:if is=\"{{ $thread.discussion_type == 'redirect' }}\">&ndash;<xf:else />\n\t<xf:if is=\"{{ \n\t\t$xf.visitor.hasPermission('forum','whoRepliedView') and \n\t\t$thread.reply_count > 0\n\t}}\">\n\t\t<a href=\"{{ link('threads/whoreplied', $thread) }}\" \n\t\t   title=\"{{ phrase('whoreplied_whoreplied') }}\" \n\t\t   data-xf-click=\"overlay\" data-xf-init=\"tooltip\" \n\t\t>{$thread.reply_count|number}</a>\n\t<xf:else />\n\t\t{$thread.reply_count}\n\t</xf:if>\n</xf:if>\n$3"
+}

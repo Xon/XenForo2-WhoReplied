@@ -1,9 +1,0 @@
-{
-    "template": "thread_list_item",
-    "description": "",
-    "execution_order": 10,
-    "enabled": true,
-    "action": "str_replace",
-    "find": "{xen:if $thread.isRedirect, '&ndash;', {xen:number $thread.reply_count}}",
-    "replace": "<xen:if is=\"{$thread.isRedirect}\">\n&ndash;\n<xen:else />\n<xen:if is=\"{$visitor.permissions.forum.whoRepliedView} and {$thread.reply_count} > 0\">\n<a href=\"{xen:link threads/whoreplied, $thread}\" title=\"{xen:phrase whoreplied_whoreplied}\" class=\"OverlayTrigger\" data-cacheOverlay=\"true\">{xen:number $thread.reply_count}</a>\n<xen:else />\n{$thread.reply_count}\n</xen:if>\n</xen:if>"
-}
