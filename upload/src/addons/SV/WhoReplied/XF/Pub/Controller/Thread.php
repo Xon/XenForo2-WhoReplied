@@ -39,18 +39,8 @@ class Thread extends XFCP_Thread
 
 		$searcher->setOrder($order, $direction);
 
-		$replyingUserIds = join(
-			',',
-			array_column(
-				$this->finder('XF:ThreadUserPost')
-					->where('thread_id', '=', $threadId)
-					->fetchColumns('user_id'),
-				'user_id'
-			)
-		);
-
 		$finder = $searcher->getFinder();
-		$finder->whereSql("user_id IN ($replyingUserIds)");
+        $finder->with("ThreadUserPost|{$threadId}");
 
 		if (strlen($filter['text']))
 		{
