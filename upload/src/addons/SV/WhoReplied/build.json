@@ -1,0 +1,8 @@
+{
+    "additional_files": [
+        "js/sv/whoreplied"
+    ],
+    "minify": [
+        "js/sv/whoreplied/whoreplied.js"
+    ]
+}
