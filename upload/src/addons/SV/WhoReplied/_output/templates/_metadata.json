@@ -4,11 +4,6 @@
         "version_string": "2.0.0",
         "hash": "03de74d1522192f7b8ae4677a93b2f84"
     },
-    "public/whoreplied.css": {
-        "version_id": 2000070,
-        "version_string": "2.0.0",
-        "hash": "d41d8cd98f00b204e9800998ecf8427e"
-    },
     "public/whoreplied.less": {
         "version_id": 2000070,
         "version_string": "2.0.0",
@@ -20,8 +15,8 @@
         "hash": "00c595c408a81b4746264eab4e3bc3e9"
     },
     "public/whoreplied_list.html": {
-        "version_id": 2000070,
+        "version_id": 2000000,
         "version_string": "2.0.0",
-        "hash": "fdaecea0734373f01df3b163f52e532c"
+        "hash": "de34ed7fb3b7437239f13b7386e743bc"
     }
 }
