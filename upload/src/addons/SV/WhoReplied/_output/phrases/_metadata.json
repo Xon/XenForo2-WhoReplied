@@ -5,12 +5,6 @@
         "version_string": "2.0.0",
         "hash": "d32438ea0b5fd8eac993b231efd4899d"
     },
-    "option_WhoReplied_usersPerPage.txt": {
-        "global_cache": false,
-        "version_id": 1050000,
-        "version_string": "1.5.0",
-        "hash": "d32438ea0b5fd8eac993b231efd4899d"
-    },
     "option_explain.WhoReplied_usersPerPage.txt": {
         "global_cache": false,
         "version_id": 1050000,
@@ -30,12 +24,6 @@
         "hash": "1f38cb93773d37733856cc1355bc0c3c"
     },
     "permission.forum_whoRepliedView.txt": {
-        "global_cache": false,
-        "version_id": 3,
-        "version_string": "1.1.0",
-        "hash": "bab3da338d88f93ebeae049fa139b68d"
-    },
-    "permission_forum_whoRepliedView.txt": {
         "global_cache": false,
         "version_id": 3,
         "version_string": "1.1.0",
