@@ -49,21 +49,22 @@
 				<xf:foreach loop="$users" key="$userId" value="$user">
 					<li class="block-row block-row--separated userList-row js-filterSearchable">
 						<xf:set var="$extraTemplate">
-							<div class="whoreplied_postcount">
+							<div class="whoreplied--postcount">
 								<xf:if is="$canSearch">
-									<a href="{{ link('search/search', '', {'users':{$user.username}, 'type':'post', 'thread_id': $thread.thread_id, 'order':'date'}) }}" target="_blank" title="{{ phrase('whoreplied_see_posts') }}">
-										{$user.ThreadUserPost.{$thread.thread_id}.post_count}
+									<a href="{{ link('search/search', '', {'c[users]':{$user.username}, 'type':'post', 'thread_id': $thread.thread_id, 'order':'date'}) }}" target="_blank" title="{{ phrase('whoreplied_see_posts') }}">
+										{$user.ThreadUserPost.{$thread.thread_id}.post_count|number}
 									</a>
 								<xf:else />
-									{$user.ThreadUserPost.{$thread.thread_id}.post_count}
+									{$user.ThreadUserPost.{$thread.thread_id}.post_count|number}
 								</xf:if>
 							</div>
 						</xf:set>
 						<xf:macro template="member_list_macros" 
 								  name="item" 
 								  arg-user="{$user}" 
-								  arg-extraData="1"
-								  arg-extraDataBig="{$extraTemplate}" />
+								  arg-extraData="{$extraTemplate}"
+								  arg-extraDataBig="1"
+								  />
 					</li>
 				</xf:foreach>
 			</div>
