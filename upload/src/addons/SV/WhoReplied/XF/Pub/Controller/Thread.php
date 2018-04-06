@@ -12,9 +12,10 @@ class Thread extends XFCP_Thread
 	public function actionWhoReplied(ParameterBag $params)
 	{
         $threadId = $params->get('thread_id');
+        /** @var \SV\WhoReplied\XF\Entity\Thread $thread */
         $thread = $this->assertViewableThread($threadId, $this->getThreadViewExtraWith());
 
-		if (!\XF::visitor()->hasNodePermission($thread->node_id, 'whoRepliedView')) {
+		if (!$thread->canViewWhoReplied()) {
 			return $this->noPermission();
 		}
 

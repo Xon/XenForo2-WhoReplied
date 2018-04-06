@@ -5,5 +5,5 @@
     "enabled": true,
     "action": "str_replace",
     "find": "<!--[XF:thread_tools_menu:before_footer]-->",
-    "replace": "<xf:if is=\"{{ $xf.visitor.hasPermission('forum','whoRepliedView') }}\">\n\t<a href=\"{{ link('threads/who-replied', $thread) }}\" data-xf-click=\"overlay\" class=\"menu-linkRow\">{{ phrase('whoreplied_whoreplied') }}</a>\n</xf:if>\n$0"
+    "replace": "<xf:if is=\"$thread.canViewWhoReplied()\">\n\t<a href=\"{{ link('threads/who-replied', $thread) }}\" data-xf-click=\"overlay\" class=\"menu-linkRow\">{{ phrase('whoreplied_whoreplied') }}</a>\n</xf:if>\n$0"
 }

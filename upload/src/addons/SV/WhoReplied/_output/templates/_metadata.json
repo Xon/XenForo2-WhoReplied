@@ -4,6 +4,11 @@
         "version_string": "2.0.0",
         "hash": "03de74d1522192f7b8ae4677a93b2f84"
     },
+    "public/thread_list_macros_whoreplied.html": {
+        "version_id": 2000070,
+        "version_string": "2.0.0",
+        "hash": "71418cf1018cf9142f99f7503079f330"
+    },
     "public/whoreplied.less": {
         "version_id": 2000070,
         "version_string": "2.0.0",
