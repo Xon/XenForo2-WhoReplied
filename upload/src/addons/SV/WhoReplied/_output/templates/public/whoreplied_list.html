@@ -51,7 +51,7 @@
 						<xf:set var="$extraTemplate">
 							<div class="whoreplied--postcount">
 								<xf:if is="$canSearch">
-									<a href="{{ link('search/search', '', {'c[users]':{$user.username}, 'type':'post', 'thread_id': $thread.thread_id, 'order':'date'}) }}" target="_blank" title="{{ phrase('whoreplied_see_posts') }}">
+									<a href="{{ link('search/search', '', {'c[users]':{$user.username}, 'search_type':'post', 'c[thread]': $thread.thread_id, 'order':'date'}) }}" target="_blank" title="{{ phrase('whoreplied_see_posts') }}">
 										{$user.ThreadUserPost.{$thread.thread_id}.post_count|number}
 									</a>
 								<xf:else />
