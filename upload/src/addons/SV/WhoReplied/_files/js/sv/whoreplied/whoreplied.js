@@ -1,4 +1,4 @@
-!function($, window, document, _undefined)
+(function($, window, document, _undefined)
 {
     "use strict";
 
@@ -22,5 +22,4 @@
     });
 
     XF.Element.register('who-replied-init', 'XF.WhoReplied');
-}
-(jQuery, window, document);
+} (jQuery, window, document));
