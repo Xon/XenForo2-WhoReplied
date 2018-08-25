@@ -1,8 +1,8 @@
-<xf:js>
-	jQuery.extend(XF.phrases, {
-		no_items_matched_your_filter: "{{ phrase('no_items_matched_your_filter')|escape('js') }}"
-	});
-</xf:js>
+<script class="js-extraPhrases" type="application/json">
+	{
+		"no_items_matched_your_filter": "{{ phrase('no_items_matched_your_filter')|escape('js') }}"
+	}
+</script>
 
 <xf:title page="{$page}">{{ prefix('thread', $thread, 'escaped') }}{$thread.title} - {{ phrase('whoreplied_members_who_replied') }}</xf:title>
 <xf:h1>{{ phrase('whoreplied_members_who_replied') }}</xf:h1>
@@ -59,9 +59,9 @@
 								</xf:if>
 							</div>
 						</xf:set>
-						<xf:macro template="member_list_macros" 
-								  name="item" 
-								  arg-user="{$user}" 
+						<xf:macro template="member_list_macros"
+								  name="item"
+								  arg-user="{$user}"
 								  arg-extraData="{$extraTemplate}"
 								  arg-extraDataBig="1"
 								  />
