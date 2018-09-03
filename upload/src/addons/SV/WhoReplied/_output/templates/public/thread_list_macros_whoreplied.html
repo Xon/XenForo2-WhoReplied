@@ -1,8 +1,8 @@
 <xf:if is="$thread.discussion_type == 'redirect'">&ndash;
 <xf:elseif is="$thread.reply_count && $thread.canViewWhoReplied()" />
-	<a href="{{ link('threads/who-replied', $thread) }}" 
-	   title="{{ phrase('whoreplied_whoreplied') }}" 
-	   data-xf-click="overlay" data-xf-init="tooltip" 
+	<a href="{{ link('threads/who-replied', $thread) }}"
+	   title="{{ phrase('whoreplied_whoreplied')|for_attr }}"
+	   data-xf-click="overlay" data-xf-init="tooltip"
 	   >{$thread.reply_count|number}</a>
 <xf:else />{$thread.reply_count}
 </xf:if>

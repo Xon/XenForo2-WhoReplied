@@ -10,7 +10,7 @@
          data-no-results-format="<div class=&quot;blockMessage js-filterNoResults&quot;>%s</div>"
     >
         <div class="inputGroup inputGroup--inline inputGroup--joined">
-            <input type="text" class="input js-filterInput" placeholder="{{ phrase('filter...') }}" data-xf-key="{{ phrase('shortcut.filter') }}" />
+            <input type="text" class="input js-filterInput" placeholder="{{ phrase('filter...')|for_attr }}" data-xf-key="{{ phrase('shortcut.filter')|for_attr }}" />
             <xf:checkbox standalone="true">
                 <xf:option labelclass="inputGroup-text" class="js-filterPrefix" label="{{ phrase('prefix') }}" />
             </xf:checkbox>
