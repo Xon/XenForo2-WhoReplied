@@ -22,8 +22,6 @@ class Thread extends XFCP_Thread
         }
 
         $criteria = $this->filter('criteria', 'array');
-        //$secondaryOrder = $this->filter('order', 'str');
-        //$secondaryDirection = $this->filter('direction', 'str');
 
         $page = isset($params['page']) ? $params['page'] : 1;
         $perPage = \XF::options()['WhoReplied_usersPerPage'];
@@ -32,6 +30,7 @@ class Thread extends XFCP_Thread
             'text'   => 'str',
             'prefix' => 'bool'
         ]);
+        /** @var \XF\Searcher\User $searcher */
         $searcher = $this->searcher('XF:User', $criteria);
 
         $finder = $searcher->getFinder();
