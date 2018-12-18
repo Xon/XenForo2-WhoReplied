@@ -16,19 +16,7 @@ class Setup extends AbstractSetup
 
     public function installStep1()
     {
-        $db = $this->db();
-        $db->query("
-            insert ignore into xf_permission_entry_content (content_type, content_id, user_group_id, user_id, permission_group_id, permission_id, permission_value, permission_value_int)
-            select distinct content_type, content_id, ?, 0, convert(permission_group_id using utf8), 'whoRepliedView', permission_value, permission_value_int
-            from xf_permission_entry_content
-            where permission_group_id = 'forum' and permission_id in ('viewContent')
-        ", [User::GROUP_REG]);
-
-        $db->query("
-            insert ignore into xf_permission_entry (user_group_id, user_id, permission_group_id, permission_id, permission_value, permission_value_int)
-            select distinct ?, 0, convert(permission_group_id using utf8), 'whoRepliedView', permission_value, permission_value_int
-            from xf_permission_entry
-            where permission_group_id = 'forum' and permission_id in ('viewContent')
-        ", [User::GROUP_REG]);
+        $this->applyContentPermission('forum', 'whoRepliedView', 'forum', 'viewContent');
+        $this->applyGlobalPermission('forum', 'whoRepliedView', 'forum', 'viewContent');
     }
 }
