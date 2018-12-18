@@ -2,11 +2,13 @@
 
 namespace SV\WhoReplied\XF\Entity;
 
-use XF\Mvc\Entity\Entity;
+use XF\Entity\ThreadUserPost;
 use XF\Mvc\Entity\Structure;
 
 /**
  * Extends \XF\Entity\User
+ *
+ * @property ThreadUserPost[] ThreadUserPost
  */
 class User extends XFCP_User
 {

@@ -5,7 +5,7 @@ namespace SV\WhoReplied\XF\Pub\Controller;
 /*
  * Extends \XF\Pub\Controller\Thread
  */
-use XF\Mvc\Entity\FinderExpression;
+
 use XF\Mvc\ParameterBag;
 
 class Thread extends XFCP_Thread
