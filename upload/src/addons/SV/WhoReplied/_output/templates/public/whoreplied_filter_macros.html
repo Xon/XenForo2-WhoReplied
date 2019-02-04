@@ -9,12 +9,14 @@
          data-search-row-group=".contentRow"
          data-no-results-format="<div class=&quot;blockMessage js-filterNoResults&quot;>%s</div>"
     >
-        <div class="inputGroup inputGroup--inline inputGroup--joined">
-            <input type="text" class="input js-filterInput" placeholder="{{ phrase('filter...')|for_attr }}" data-xf-key="{{ phrase('shortcut.filter')|for_attr }}" />
-            <xf:checkbox standalone="true">
-                <xf:option labelclass="inputGroup-text" class="js-filterPrefix" label="{{ phrase('prefix') }}" />
-            </xf:checkbox>
-            <i class="inputGroup-text js-filterClear is-disabled" aria-hidden="true"></i>
+		<div class="inputGroup inputGroup--inline inputGroup--joined">
+			<input type="text" class="input js-filterInput" placeholder="{{ phrase('filter...')|for_attr }}" data-xf-key="{{ phrase('shortcut.filter')|for_attr }}" />
+			<span class="inputGroup-text">
+				<xf:checkbox standalone="true">
+					<xf:option class="js-filterPrefix" label="{{ phrase('prefix') }}" />
+				</xf:checkbox>
+			</span>
+			<i class="inputGroup-text js-filterClear is-disabled" aria-hidden="true"></i>
         </div>
     </div>
 </xf:macro>
