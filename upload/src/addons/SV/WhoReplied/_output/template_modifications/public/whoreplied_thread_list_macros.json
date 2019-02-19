@@ -4,6 +4,6 @@
     "execution_order": 6340,
     "enabled": true,
     "action": "preg_replace",
-    "find": "/(<dt>{{ phrase\\('replies'\\) }}<\\/dt>\\s*<dd>)(.*?)(<\\/dd>)/si",
-    "replace": "$1\n<xf:include template=\"thread_list_macros_whoreplied\" />\n$3"
+    "find": "/(<dt>{{ phrase\\('replies'\\) }}<\\/dt>\\s*<dd>)(?:.*?)(\\$thread\\.reply_count\\s*\\|\\s*[^\\s]+)(?:.*?)(<\\/dd>)/si",
+    "replace": "$1\n<xf:set var=\"$threadReplyCount\">{{ $2 }}</xf:set>\n<xf:include template=\"thread_list_macros_whoreplied\" />\n$3"
 }
