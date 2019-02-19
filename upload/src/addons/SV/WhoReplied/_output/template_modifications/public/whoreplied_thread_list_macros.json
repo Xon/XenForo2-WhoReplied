@@ -1,7 +1,7 @@
 {
     "template": "thread_list_macros",
     "description": "",
-    "execution_order": 10,
+    "execution_order": 6340,
     "enabled": true,
     "action": "preg_replace",
     "find": "/(<dt>{{ phrase\\('replies'\\) }}<\\/dt>\\s*<dd>)(.*?)(<\\/dd>)/si",

@@ -1,7 +1,7 @@
 {
     "template": "thread_view",
     "description": "",
-    "execution_order": 10,
+    "execution_order": 6340,
     "enabled": true,
     "action": "str_replace",
     "find": "<!--[XF:thread_tools_menu:before_footer]-->",
