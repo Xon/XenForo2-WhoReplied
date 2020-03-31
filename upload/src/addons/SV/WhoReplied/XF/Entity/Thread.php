@@ -10,9 +10,9 @@ class Thread extends XFCP_Thread
     /**
      * @param string|null $error
      * @return bool
+     * @noinspection PhpUnusedParameterInspection
      */
-    public function canViewWhoReplied(/** @noinspection PhpUnusedParameterInspection */
-        $error = null)
+    public function canViewWhoReplied($error = null)
     {
         $visitor = \XF::visitor();
 

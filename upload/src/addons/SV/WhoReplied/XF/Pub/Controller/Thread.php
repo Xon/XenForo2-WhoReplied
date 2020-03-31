@@ -2,10 +2,6 @@
 
 namespace SV\WhoReplied\XF\Pub\Controller;
 
-/*
- * Extends \XF\Pub\Controller\Thread
- */
-
 use XF\Mvc\ParameterBag;
 
 class Thread extends XFCP_Thread
@@ -24,7 +20,7 @@ class Thread extends XFCP_Thread
         $criteria = $this->filter('criteria', 'array');
 
         $page = isset($params['page']) ? $params['page'] : 1;
-        $perPage = \XF::options()['WhoReplied_usersPerPage'];
+        $perPage = \XF::options()->WhoReplied_usersPerPage;
 
         $filter = $this->filter('_xfFilter', [
             'text'   => 'str',

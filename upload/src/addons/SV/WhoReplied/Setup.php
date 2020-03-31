@@ -14,6 +14,7 @@ class Setup extends AbstractSetup
     use StepRunnerUpgradeTrait;
     use StepRunnerUninstallTrait;
 
+    /** @noinspection PhpUnused */
     public function installStep1()
     {
         $this->applyContentPermission('forum', 'whoRepliedView', 'forum', 'viewContent');
