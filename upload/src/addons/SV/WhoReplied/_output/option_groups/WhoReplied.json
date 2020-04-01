@@ -1,4 +1,5 @@
 {
+    "icon": "fa-users",
     "display_order": 1000,
     "debug_only": false
 }
