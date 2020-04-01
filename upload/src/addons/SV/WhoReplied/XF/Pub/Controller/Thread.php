@@ -2,6 +2,7 @@
 
 namespace SV\WhoReplied\XF\Pub\Controller;
 
+use XF\Finder\User as UserFinder;
 use XF\Mvc\ParameterBag;
 
 class Thread extends XFCP_Thread
@@ -17,8 +18,6 @@ class Thread extends XFCP_Thread
             return $this->noPermission();
         }
 
-        $criteria = $this->filter('criteria', 'array');
-
         $page = isset($params['page']) ? $params['page'] : 1;
         $perPage = \XF::options()->WhoReplied_usersPerPage;
 
@@ -26,29 +25,28 @@ class Thread extends XFCP_Thread
             'text'   => 'str',
             'prefix' => 'bool'
         ]);
-        /** @var \XF\Searcher\User $searcher */
-        $searcher = $this->searcher('XF:User', $criteria);
 
-        $finder = $searcher->getFinder();
-        $finder->with("ThreadUserPost|{$threadId}", true);
-        $finder->order("ThreadUserPost|{$threadId}.post_count", 'DESC');
-        $finder->order('user_id');
+        /** @var UserFinder $userFinder */
+        $userFinder = $this->finder('XF:User');
+        $userFinder->with("ThreadUserPost|{$threadId}", true);
+        $userFinder->order("ThreadUserPost|{$threadId}.post_count", 'DESC');
+        $userFinder->order('user_id');
 
-        if (strlen($filter['text']))
+        if (\utf8_strlen($filter['text']))
         {
-            $finder->where(
-                'username',
+            $userFinder->where(
+                $userFinder->columnUtf8('username'),
                 'LIKE',
-                $finder->escapeLike($filter['text'], $filter['prefix'] ? '?%' : '%?%')
+                $userFinder->escapeLike($filter['text'], $filter['prefix'] ? '?%' : '%?%')
             );
         }
-        $finder->limitByPage($page, $perPage);
 
-        $total = $finder->total();
-        $users = $finder->fetch();
+        $userFinder->limitByPage($page, $perPage);
+
+        $total = $userFinder->total();
+        $users = $userFinder->fetch();
 
         $this->assertValidPage($page, $perPage, $total, 'thread/who-replied');
-
 
         $viewParams = [
             'thread' => $thread,
@@ -59,7 +57,6 @@ class Thread extends XFCP_Thread
             'page'    => $page,
             'perPage' => $perPage,
 
-            'criteria'    => $searcher->getFilteredCriteria(),
             'filter'      => $filter['text'],
             'sortOptions' => [],
             'order'       => '',

@@ -31,7 +31,6 @@
 							total="{$total}"
 							link="threads/who-replied"
 							data="{$thread}"
-							params="{{ {'criteria': $criteria, 'order': $order, 'direction': $direction} }}"
 							wrapperclass="js-filterHide block-outer block-outer--after"
 				/>
 
@@ -39,7 +38,7 @@
 			<xf:macro template="whoreplied_filter_macros"
 					  name="quick_filter"
 					  arg-key="users"
-					  arg-ajax="{{ link('threads/who-replied', $thread, {'criteria': $criteria}) }}"
+					  arg-ajax="{{ link('threads/who-replied', $thread) }}"
 					  arg-class="block-outer-opposite"
 			/>
 		</div>
@@ -78,7 +77,6 @@
 					total="{$total}"
 					link="threads/who-replied"
 					data="{$thread}"
-					params="{{ {'criteria': $criteria, 'order': $order, 'direction': $direction} }}"
 					wrapperclass="js-filterHide block-outer block-outer--after"
 		/>
 	<xf:else />
