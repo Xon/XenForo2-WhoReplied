@@ -21,6 +21,8 @@ class Thread extends XFCP_Thread
         $page = $this->filterPage($params->page);
         $perPage = \XF::options()->WhoReplied_usersPerPage;
 
+        $linkFilters = [];
+
         $filter = $this->filter('_xfFilter', [
             'text'   => 'str',
             'prefix' => 'bool'
@@ -34,6 +36,8 @@ class Thread extends XFCP_Thread
 
         if (\utf8_strlen($filter['text']))
         {
+            $linkFilters['_xfFilter'] = $filter;
+
             $userFinder->where(
                 $userFinder->columnUtf8('username'),
                 'LIKE',
@@ -57,10 +61,7 @@ class Thread extends XFCP_Thread
             'page'    => $page,
             'perPage' => $perPage,
 
-            'filter'      => $filter['text'],
-            'sortOptions' => [],
-            'order'       => '',
-            'direction'   => ''
+            'linkFilters' => $linkFilters
         ];
 
         return $this->view('XF:Thread\WhoReplied', 'whoreplied_list', $viewParams);

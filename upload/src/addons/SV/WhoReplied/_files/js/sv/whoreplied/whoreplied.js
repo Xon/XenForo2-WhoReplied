@@ -7,7 +7,6 @@
         },
 
         init: function () {
-            console.log(this.$target);
             if (this.$target.parents('.overlay-container').length) {
                 this.$target.find('.pageNav a').each(
                     function() {

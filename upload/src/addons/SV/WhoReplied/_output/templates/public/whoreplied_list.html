@@ -26,14 +26,14 @@
 
 		<div class="block-outer">
 			<div class="block-outer-main">
-				<xf:pagenav page="{$page}"
-							perpage="{$perPage}"
-							total="{$total}"
-							link="threads/who-replied"
-							data="{$thread}"
-							wrapperclass="js-filterHide block-outer block-outer--after"
-				/>
-
+				<div class="block-outer block-outer--after block-outer--whoRepliedPageNavWrapper">
+					<xf:pagenav page="{$page}"
+								perpage="{$perPage}"
+								total="{$total}"
+								link="threads/who-replied"
+								data="{$thread}"
+								params="{$linkFilters}" />
+				</div>
 			</div>
 			<xf:macro template="whoreplied_filter_macros"
 					  name="quick_filter"
@@ -42,6 +42,7 @@
 					  arg-class="block-outer-opposite"
 			/>
 		</div>
+		
 		<div class="block-container">
 			<div class="block-body userList">
 				<xf:set var="$canSearch" value="{{ $xf.visitor.canSearch() }}" />
@@ -72,13 +73,14 @@
 			</div>
 		</div>
 
-		<xf:pagenav page="{$page}"
-					perpage="{$perPage}"
-					total="{$total}"
-					link="threads/who-replied"
-					data="{$thread}"
-					wrapperclass="js-filterHide block-outer block-outer--after"
-		/>
+		<div class="block-outer block-outer--after block-outer--whoRepliedPageNavWrapper">
+			<xf:pagenav page="{$page}"
+						perpage="{$perPage}"
+						total="{$total}"
+						link="threads/who-replied"
+						data="{$thread}"
+						params="{$linkFilters}" />
+		</div>
 	<xf:else />
 		<div class="blockMessage">{{ phrase('no_records_matched') }}</div>
 	</xf:if>
