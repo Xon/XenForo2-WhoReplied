@@ -23,7 +23,7 @@ class Thread extends XFCP_Thread
 
         $linkFilters = [];
 
-        $filter = $this->filter('_xfFilter', [
+        $linkFilters['_xfFilter'] = $this->filter('_xfFilter', [
             'text'   => 'str',
             'prefix' => 'bool'
         ]);
@@ -34,14 +34,15 @@ class Thread extends XFCP_Thread
         $userFinder->order("ThreadUserPost|{$threadId}.post_count", 'DESC');
         $userFinder->order('user_id');
 
-        if (\utf8_strlen($filter['text']))
+        if (\utf8_strlen($linkFilters['_xfFilter']['text']))
         {
-            $linkFilters['_xfFilter'] = $filter;
-
             $userFinder->where(
                 $userFinder->columnUtf8('username'),
                 'LIKE',
-                $userFinder->escapeLike($filter['text'], $filter['prefix'] ? '?%' : '%?%')
+                $userFinder->escapeLike(
+                    $linkFilters['_xfFilter']['text'],
+                    $linkFilters['_xfFilter']['prefix'] ? '?%' : '%?%'
+                )
             );
         }
 

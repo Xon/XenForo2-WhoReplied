@@ -40,6 +40,7 @@
 					  arg-key="users"
 					  arg-ajax="{{ link('threads/who-replied', $thread) }}"
 					  arg-class="block-outer-opposite"
+					  arg-input="{{ key_exists($linkFilters, '_xfFilter') ? $linkFilters._xfFilter : [] }}"
 			/>
 		</div>
 		
@@ -84,7 +85,4 @@
 	<xf:else />
 		<div class="blockMessage">{{ phrase('no_records_matched') }}</div>
 	</xf:if>
-
-	<xf:submitrow submit="{{ phrase('close') }}" rowtype="simple" class="js-overlayClose"/>
-
 </xf:form>
