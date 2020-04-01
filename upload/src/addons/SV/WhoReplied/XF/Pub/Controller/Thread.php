@@ -18,7 +18,7 @@ class Thread extends XFCP_Thread
             return $this->noPermission();
         }
 
-        $page = isset($params['page']) ? $params['page'] : 1;
+        $page = $this->filterPage($params->page);
         $perPage = \XF::options()->WhoReplied_usersPerPage;
 
         $filter = $this->filter('_xfFilter', [
