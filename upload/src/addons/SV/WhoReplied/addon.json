@@ -10,7 +10,8 @@
     "support_url": "https://xenforo.com/community/resources/who-replied.6340/",
     "extra_urls": [],
     "require" : {
-        "php": ["5.6.0", "PHP 5.6.0+"]
+        "php": ["5.6.0", "PHP 5.6.0+"],
+        "XF": [2010070,"XenForo 2.1.0+"]
     },
     "icon": "fa-users"
 }
