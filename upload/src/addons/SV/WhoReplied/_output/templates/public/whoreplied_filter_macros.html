@@ -1,5 +1,6 @@
 <xf:macro name="quick_filter" arg-key="" arg-ajax="" arg-class="" arg-input="{{ [] }}">
     <xf:js src="xf/filter.js" min="1" />
+	<xf:js src="sv/vendor/domurl/url.js" addon="SV/WhoReplied" min="1" />
 	<xf:js src="sv/whoreplied/xf/filter.js" addon="SV/WhoReplied" min="1" />
 	
     <div class="{$class} quickFilter u-jsOnly"
@@ -9,6 +10,7 @@
          data-search-target=".userList"
          data-search-row=".userList-row"
          data-search-row-group=".contentRow"
+		 data-search-limit=".username"
          data-no-results-format="<div class=&quot;blockMessage js-filterNoResults&quot;>%s</div>"
 		 data-sv-whoreplied-pagenav-wrapper=".block-outer--whoRepliedPageNavWrapper"
 		 data-sv-whoreplied-existing-filter-text="{$input.text|for_attr}"

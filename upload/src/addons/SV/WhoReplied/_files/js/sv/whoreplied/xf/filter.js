@@ -9,7 +9,8 @@ SV.WhoReplied = SV.WhoReplied || {};
         __backup: {
             '_filterAjax': 'svWhoReplied__filterAjax',
             '_filterAjaxResponse': 'svWhoReplied__filterAjaxResponse', // __ is intentional
-            'update': 'svWhoReplied_update'
+            'update': 'svWhoReplied_update',
+            '_updateStoredValue': 'svWhoReplied__updateStoredValue'
         },
 
         options: $.extend({}, XF.Filter.prototype.options, {
@@ -18,25 +19,26 @@ SV.WhoReplied = SV.WhoReplied || {};
             svWhorepliedPagenavWrapper: null
         }),
 
+        xhrFilterOriginal: null,
+
         update: function()
         {
             if (this.svWhoRepliedGetPagenavWrapper())
             {
                 var existingFilterText = this.options.svWhorepliedExistingFilterText,
-                    existingFilterPrefix = this.options.svWhorepliedExistingFilterPrefix;
+                    existingFilterPrefix = this.options.svWhorepliedExistingFilterPrefix,
+                    currentFilterText = this.$input.val(),
+                    currentFilterPrefix = this.$prefix.is(':checked');
 
-                if (this.$input.val() === existingFilterText
-                    && (this.$prefix.is(':checked') ? true : false) === existingFilterPrefix
+                this._updateStoredValue(currentFilterText, currentFilterPrefix);
+
+                if (currentFilterText !== '' &&
+                    currentFilterText === existingFilterText &&
+                    currentFilterPrefix === existingFilterPrefix
                 )
                 {
-                    // we need set the ajax url to nothing
-                    var originalAjax = this.options.ajax;
-                    this.options.ajax = null;
-
-                    this.filter(existingFilterText, existingFilterPrefix);
-
-                    // and then restore it back
-                    this.options.ajax = originalAjax;
+                    this._applyFilter(this._getSearchRows(), existingFilterText, existingFilterPrefix);
+                    this._toggleFilterHide(true);
 
                     return;
                 }
@@ -45,19 +47,78 @@ SV.WhoReplied = SV.WhoReplied || {};
             this.svWhoReplied_update();
         },
 
+        _updateStoredValue: function(val, prefix)
+        {
+            this.svWhoReplied__updateStoredValue(val, prefix);
+
+            var finalUrl = new Url(window.location.href);
+
+            if (val === '')
+            {
+                if ("_xfFilter[text]" in finalUrl.query)
+                {
+                    delete finalUrl.query["_xfFilter[text]"];
+                }
+                if ("_xfFilter[prefix]" in finalUrl.query)
+                {
+                    delete finalUrl.query["_xfFilter[prefix]"];
+                }
+            }
+            else
+            {
+                finalUrl.query["_xfFilter[text]"] = val;
+                finalUrl.query["_xfFilter[prefix]"] = prefix === true ? 1 : 0;
+            }
+
+            finalUrl = decodeURIComponent(finalUrl.toString());
+
+            if ('pushState' in window.history)
+            {
+                window.history.pushState({
+                    state: 1,
+                    rand: Math.random()
+                }, '', finalUrl);
+            }
+            else
+            {
+                window.location = finalUrl; // force
+            }
+        },
+
         _filterAjax: function(text, prefix)
         {
             this.svWhoReplied__filterAjax(text, prefix);
 
-            if (this.svWhoRepliedGetPagenavWrapper() && !text.length)
+            if (this.svWhoRepliedGetPagenavWrapper())
             {
-                XF.ajax('GET', this.options.ajax, {
-                    _xfFilter: {
-                        text: '',
-                        prefix: 0
-                    }
-                }, XF.proxy(this, 'svWhoRepliedUpdatePagination'));
+                if (!text.length)
+                {
+                    XF.ajax('GET', this.options.ajax, {
+                        _xfFilter: {
+                            text: text,
+                            prefix: prefix ? 1 : 0
+                        }
+                    }, XF.proxy(this, 'svWhoRepliedMasked_filterAjaxResponse'));
+                }
             }
+        },
+
+        svWhoRepliedMasked_filterAjaxResponse: function(result)
+        {
+            if (!this.svWhoRepliedGetPagenavWrapper())
+            {
+                return;
+            }
+
+            this.xhrFilterOriginal = this.xhrFilter;
+            this.xhrFilter = {
+                text: '',
+                prefix: 0
+            };
+
+            this._filterAjaxResponse(result);
+
+            this.xhrFilter = this.xhrFilterOriginal;
         },
 
         _filterAjaxResponse: function(result)
