@@ -67,6 +67,11 @@ SV.WhoReplied = SV.WhoReplied || {};
         {
             this.svWhoReplied__updateStoredValue(val, prefix);
 
+            if (this.inOverlay)
+            {
+                return;
+            }
+
             var finalUrl = new Url(window.location.href);
 
             if (val === '')
