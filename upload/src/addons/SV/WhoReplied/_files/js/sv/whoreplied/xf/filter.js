@@ -7,6 +7,7 @@ SV.WhoReplied = SV.WhoReplied || {};
 
     XF.Filter = XF.extend(XF.Filter, {
         __backup: {
+            'init': 'svWhoReplied__init',
             '_filterAjax': 'svWhoReplied__filterAjax',
             '_filterAjaxResponse': 'svWhoReplied__filterAjaxResponse', // __ is intentional
             'update': 'svWhoReplied_update',
@@ -14,12 +15,27 @@ SV.WhoReplied = SV.WhoReplied || {};
         },
 
         options: $.extend({}, XF.Filter.prototype.options, {
+            svLoadInOverlay: true,
             svWhorepliedExistingFilterText: '',
             svWhorepliedExistingFilterPrefix: false,
             svWhorepliedPagenavWrapper: null
         }),
 
+        inOverlay: false,
         xhrFilterOriginal: null,
+
+        init: function () {
+            if (this.$target.parents('.overlay-container').length) {
+                this.inOverlay = true;
+            }
+
+            this.svWhoReplied__init();
+
+            if (this.inOverlay)
+            {
+                this.svWhoRepliedOverlayShim(this.$target.closest('form').find('nav.pageNavWrapper'));
+            }
+        },
 
         update: function()
         {
@@ -145,9 +161,23 @@ SV.WhoReplied = SV.WhoReplied || {};
             }
 
             oldPageNavWrapper.html(newPageNavWrapper.html());
+            if (this.inOverlay)
+            {
+                this.svWhoRepliedOverlayShim(oldPageNavWrapper);
+            }
         },
 
-        svWhoRepliedGetPagenavWrapper()
+        svWhoRepliedOverlayShim: function($nav) {
+            $nav.find('.pageNav a[href]').each(
+                function () {
+                    $(this).addClass('js-overlayClose');
+                    $(this).attr('data-xf-click', 'overlay');
+                }
+            );
+            XF.activate($nav);
+        },
+
+        svWhoRepliedGetPagenavWrapper: function()
         {
             if (!this.options.svWhorepliedPagenavWrapper)
             {
