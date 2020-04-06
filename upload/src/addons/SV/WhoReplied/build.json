@@ -3,6 +3,7 @@
         "js/sv/whoreplied"
     ],
     "minify": [
+        "js/sv/vendor/domurl/url.js",
         "js/sv/whoreplied/xf/filter.js"
     ]
 }
