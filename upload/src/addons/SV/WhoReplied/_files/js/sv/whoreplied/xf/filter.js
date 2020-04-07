@@ -291,32 +291,54 @@ SV.WhoReplied = SV.WhoReplied || {};
          */
         svWhoRepliedUpdateCurrentPage: function(e)
         {
-            e.preventDefault();
-
-            var storedValue = this._getStoredValue();
-            if (!storedValue || !(typeof storedValue === 'object'))
+            var $target = $(e.target);
+            if ($target.hasClass('pageNav-jump--prev'))
             {
-                storedValue = {
-                    filter: '',
-                    prefix: false,
-                    page: 1
-                };
+                $target = $target.parent()
+                    .find('ul.pageNav-main > .pageNav-page--current')
+                    .prev();
+            }
+            else if ($target.hasClass('pageNav-jump--next'))
+            {
+                $target = $target.parent()
+                    .find('ul.pageNav-main > .pageNav-page--current')
+                    .next()
+                    .find('a');
             }
 
-            storedValue.page = parseInt($(e.target).text()) || 1;
-            storedValue.saved = Math.floor(new Date().getTime() / 1000);
+            if ($target.length)
+            {
+                var storedValue = this._getStoredValue();
+                if (!storedValue || !(typeof storedValue === 'object'))
+                {
+                    storedValue = {
+                        filter: '',
+                        prefix: false,
+                        page: 1
+                    };
+                }
 
-            this.svWhoRepliedPageChanged = storedValue.page !== this.svWhoRepliedGetCurrentPage();
-            this.svWhoRepliedLastPageSelected = storedValue.page;
+                e.preventDefault();
 
-            var data = this._readFromStorage();
-            data[this.storageKey] = storedValue;
-            this._writeToStorage(data);
+                storedValue.page = parseInt($target.text()) || 1;
+                storedValue.saved = Math.floor(new Date().getTime() / 1000);
 
-            this.update();
+                this.svWhoRepliedPageChanged = storedValue.page !== this.svWhoRepliedGetCurrentPage();
+                this.svWhoRepliedLastPageSelected = storedValue.page;
 
-            this.svWhoRepliedPageChanged = false;
-            this.svWhoRepliedLastPageSelected = null;
+                var data = this._readFromStorage();
+                data[this.storageKey] = storedValue;
+                this._writeToStorage(data);
+
+                this.update();
+
+                this.svWhoRepliedPageChanged = false;
+                this.svWhoRepliedLastPageSelected = null;
+            }
+            else
+            {
+                console.error('No valid page link found.'); // for debugging purposes when preserve log is checked for edge/chrome settings
+            }
         },
 
         /**
