@@ -216,9 +216,9 @@ SV.WhoReplied = SV.WhoReplied || {};
         _updateStoredValue: function(text, prefix)
         {
             var storedValue = this._getStoredValue();
-            if (storedValue && storedValue.filter !== text)
+            if (storedValue && typeof storedValue === 'object')
             {
-                var storageKey = storageKey;
+                var storageKey = this.storageKey;
                 if (storageKey)
                 {
                     var data = this._readFromStorage();
@@ -301,6 +301,7 @@ SV.WhoReplied = SV.WhoReplied || {};
             this.update();
 
             this.svWhoRepliedPageChanged = false;
+            this.svWhoRepliedLastPageSelected = null;
         },
 
         /**
