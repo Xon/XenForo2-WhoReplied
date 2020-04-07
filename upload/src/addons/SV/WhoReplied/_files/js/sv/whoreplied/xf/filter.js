@@ -9,9 +9,10 @@ SV.WhoReplied = SV.WhoReplied || {};
         __backup: {
             'init': 'svWhoReplied__init',
             '_filterAjax': 'svWhoReplied__filterAjax',
-            '_filter': 'svWhoReplied_filter',
+            'filter': 'svWhoReplied_filter',
             '_filterAjaxResponse': 'svWhoReplied__filterAjaxResponse',
-            '_getStoredValue': 'svWhoReplied__getStoredValue'
+            '_getStoredValue': 'svWhoReplied__getStoredValue',
+            '_updateStoredValue': 'svWhoReplied__updateStoredValue'
         },
 
         options: $.extend({}, XF.Filter.prototype.options, {
@@ -35,6 +36,67 @@ SV.WhoReplied = SV.WhoReplied || {};
             this.svWhoReplied__init();
 
             this.svWhoRepliedOverlayShim();
+
+            var storedValue = this._getStoredValue();
+            if (!storedValue)
+            {
+                return;
+            }
+
+            if (!this.inOverlay && storedValue.filter === '' && storedValue.page === 1)
+            {
+                var currentUrl = new Url(window.location.href);
+                if ("_xfFilter[text]" in currentUrl.query)
+                {
+                    var text = currentUrl.query["_xfFilter[text]"],
+                        prefix = false;
+                    if ("_xfFilter[prefix]" in currentUrl.query)
+                    {
+                        prefix = currentUrl.query["_xfFilter[prefix]"];
+                    }
+
+                    var data = this._readFromStorage(),
+                        storageKey = this.storageKey;
+                    if (!storedValue)
+                    {
+                        storedValue = {
+                            filter: '',
+                            prefix: false,
+                            page: 1
+                        };
+                    }
+
+                    if (data[storageKey])
+                    {
+                        var record = data[storageKey];
+                        if ('page' in record)
+                        {
+                            storedValue.page = parseInt(record.page) || 1;
+                        }
+                    }
+
+                    if (this.svWhoRepliedLastPageSelected !== null)
+                    {
+                        storedValue.page = parseInt(this.svWhoRepliedLastPageSelected) || 1;
+                    }
+
+                    data[storageKey] = storedValue;
+                    this._writeToStorage(data);
+
+                    if (text.length)
+                    {
+                        var $rows = this.$search
+                            .find(this.options.searchRow)
+                            .filter(':not(.is-hidden)');
+                        if (!$rows.length)
+                        {
+                            return;
+                        }
+
+                        this._applyFilter($rows, text, prefix);
+                    }
+                }
+            }
         },
 
         /**
@@ -79,6 +141,23 @@ SV.WhoReplied = SV.WhoReplied || {};
 
             var $result = $($.parseHTML(result.html.content)),
                 newPageNavWrapper = $result.find(this.options.svWhorepliedPagenavWrapper);
+
+            if (!this.inOverlay)
+            {
+                var finalUrl = $result.find('input[type="hidden"][name="final_url"]').val();
+                if ('pushState' in window.history)
+                {
+                    window.history.pushState({
+                        state: 1,
+                        rand: Math.random()
+                    }, '', finalUrl);
+                }
+                else
+                {
+                    window.location = finalUrl; // force
+                }
+            }
+
             if (!newPageNavWrapper.length)
             {
                 oldPageNavWrapper.empty();
@@ -96,25 +175,64 @@ SV.WhoReplied = SV.WhoReplied || {};
          */
         _getStoredValue: function()
         {
-            var storedValue = this.svWhoReplied__getStoredValue();
+            var storedValue = this.svWhoReplied__getStoredValue(),
+                storageKey = this.storageKey;
 
-            if (storedValue && typeof storedValue === 'object')
+            if (!storageKey)
             {
-                var data = this._readFromStorage();
-                if (data[this.storageKey])
-                {
-                    var record = data[this.storageKey],
-                        tsSaved = record.saved || 0,
-                        tsNow = Math.floor(new Date().getTime() / 1000);
+                return storedValue;
+            }
 
-                    if (tsSaved + this.storageCutOff >= tsNow)
+            var data = this._readFromStorage();
+            if (!storedValue)
+            {
+                storedValue = {
+                    filter: '',
+                    prefix: false,
+                    page: 1
+                };
+            }
+
+            if (data[storageKey])
+            {
+                var record = data[storageKey];
+                if ('page' in record)
+                {
+                    storedValue.page = parseInt(record.page) || 1;
+                }
+            }
+
+            if (this.svWhoRepliedLastPageSelected !== null)
+            {
+                storedValue.page = parseInt(this.svWhoRepliedLastPageSelected) || 1;
+            }
+
+            data[storageKey] = storedValue;
+            this._writeToStorage(data);
+
+            return storedValue;
+        },
+
+        _updateStoredValue: function(text, prefix)
+        {
+            var storedValue = this._getStoredValue();
+            if (storedValue && storedValue.filter !== text)
+            {
+                var storageKey = storageKey;
+                if (storageKey)
+                {
+                    var data = this._readFromStorage();
+                    if (data[storageKey])
                     {
-                        storedValue.page = parseInt(record.page) || 1;
+                        var record = data[storageKey];
+                        record.page = 1;
+                        data[storageKey] = record;
+                        this._writeToStorage(data);
                     }
                 }
             }
 
-            return storedValue;
+            this.svWhoReplied__updateStoredValue(text, prefix);
         },
 
         filter: function(text, prefix)
@@ -143,11 +261,6 @@ SV.WhoReplied = SV.WhoReplied || {};
 
         svWhoRepliedOverlayShim: function()
         {
-            if (!this.inOverlay)
-            {
-                return;
-            }
-
             var $pageNavWrapper = this.svWhoRepliedGetPagenavWrapper();
             if (!$pageNavWrapper)
             {
@@ -170,7 +283,8 @@ SV.WhoReplied = SV.WhoReplied || {};
             {
                 storedValue = {
                     filter: '',
-                    prefix: false
+                    prefix: false,
+                    page: 1
                 };
             }
 
@@ -234,7 +348,7 @@ SV.WhoReplied = SV.WhoReplied || {};
                 return null;
             }
 
-            var storedValue = this._getStoredValue()
+            var storedValue = this._getStoredValue();
             if (!storedValue)
             {
                 var lastPageSelected = parseInt(this.svWhoRepliedLastPageSelected) || null;

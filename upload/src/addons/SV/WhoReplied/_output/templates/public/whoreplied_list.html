@@ -20,9 +20,8 @@
 	</dl>
 </div>
 
-<xf:form action="" class="block">
+<div class="block">
 	<xf:if is="$users is not empty">
-
 		<div class="block-outer">
 			<div class="block-outer-main">
 				<div class="block-outer block-outer--after block-outer--whoRepliedPageNavWrapper">
@@ -30,8 +29,7 @@
 								perpage="{$perPage}"
 								total="{$total}"
 								link="threads/who-replied"
-								data="{$thread}"
-								params="{$linkFilters}" />
+								data="{$thread}" />
 				</div>
 			</div>
 			<xf:macro template="whoreplied_filter_macros"
@@ -39,7 +37,6 @@
 					  arg-key="users"
 					  arg-ajax="{{ link('threads/who-replied', $thread) }}"
 					  arg-class="block-outer-opposite"
-					  arg-input="{{ key_exists($linkFilters, '_xfFilter') ? $linkFilters._xfFilter : [] }}"
 			/>
 		</div>
 		
@@ -78,10 +75,11 @@
 						perpage="{$perPage}"
 						total="{$total}"
 						link="threads/who-replied"
-						data="{$thread}"
-						params="{$linkFilters}" />
+						data="{$thread}" />
 		</div>
 	<xf:else />
 		<div class="blockMessage">{{ phrase('no_records_matched') }}</div>
 	</xf:if>
-</xf:form>
+	
+	<xf:hiddenval name="final_url" value="{$finalUrl}" />
+</div>

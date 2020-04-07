@@ -20,14 +20,14 @@ class Thread extends XFCP_Thread
 
         $linkFilters = [];
 
-        $linkFilters['_xfFilter'] = $this->filter('_xfFilter', [
-            'text'   => 'str',
-            'prefix' => 'bool',
-            'page' => 'uint'
-        ]);
-
         if ($this->request()->exists('_xfFilter'))
         {
+            $linkFilters['_xfFilter'] = $this->filter('_xfFilter', [
+                'text'   => 'str',
+                'prefix' => 'bool',
+                'page' => 'uint'
+            ]);
+
             $page = $this->filterPage($linkFilters['_xfFilter']['page']);
         }
         else
@@ -42,7 +42,7 @@ class Thread extends XFCP_Thread
         $userFinder->order("ThreadUserPost|{$threadId}.post_count", 'DESC');
         $userFinder->order('user_id');
 
-        if (\utf8_strlen($linkFilters['_xfFilter']['text']))
+        if (\array_key_exists('_xfFilter', $linkFilters) && \utf8_strlen($linkFilters['_xfFilter']['text']))
         {
             $userFinder->where(
                 $userFinder->columnUtf8('username'),
@@ -61,6 +61,15 @@ class Thread extends XFCP_Thread
 
         $this->assertValidPage($page, $perPage, $total, 'thread/who-replied');
 
+        $tmpLinkFilters = $linkFilters;
+        if (\array_key_exists('_xfFilter', $tmpLinkFilters))
+        {
+            unset($tmpLinkFilters['_xfFilter']['page']);
+            $tmpLinkFilters['page'] = $page;
+        }
+        $finalUrl = $this->buildLink('full:threads/who-replied', $thread, $tmpLinkFilters);
+        unset($tmpLinkFilters);
+
         $viewParams = [
             'thread' => $thread,
             'forum'  => $thread->Forum,
@@ -70,7 +79,8 @@ class Thread extends XFCP_Thread
             'page'    => $page,
             'perPage' => $perPage,
 
-            'linkFilters' => $linkFilters
+            'linkFilters' => $linkFilters,
+            'finalUrl' => $finalUrl
         ];
 
         return $this->view('XF:Thread\WhoReplied', 'whoreplied_list', $viewParams);
