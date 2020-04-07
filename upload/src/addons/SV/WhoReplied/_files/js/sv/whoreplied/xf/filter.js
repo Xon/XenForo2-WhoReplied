@@ -9,148 +9,68 @@ SV.WhoReplied = SV.WhoReplied || {};
         __backup: {
             'init': 'svWhoReplied__init',
             '_filterAjax': 'svWhoReplied__filterAjax',
-            '_filterAjaxResponse': 'svWhoReplied__filterAjaxResponse', // __ is intentional
-            'update': 'svWhoReplied_update',
-            '_updateStoredValue': 'svWhoReplied__updateStoredValue'
+            '_filter': 'svWhoReplied_filter',
+            '_filterAjaxResponse': 'svWhoReplied__filterAjaxResponse',
+            '_getStoredValue': 'svWhoReplied__getStoredValue'
         },
 
         options: $.extend({}, XF.Filter.prototype.options, {
             svLoadInOverlay: true,
             svWhorepliedExistingFilterText: '',
             svWhorepliedExistingFilterPrefix: false,
-            svWhorepliedPagenavWrapper: null
+            svWhorepliedPagenavWrapper: null,
+            svWhorepliedPagenavButtonSelector: '.pageNav a[href]',
+            svWhorepliedPagenavCurrentButtonSelector: '.pageNav-page--current > a'
         }),
 
         inOverlay: false,
         xhrFilterOriginal: null,
+        svWhoRepliedPageChanged: false,
+        svWhoRepliedLastPageSelected: null,
 
-        init: function () {
-            if (this.$target.parents('.overlay-container').length) {
-                this.inOverlay = true;
-            }
+        init: function ()
+        {
+            this.inOverlay = this.$target.parents('.overlay-container').length  !== 0;
 
             this.svWhoReplied__init();
 
-            if (this.inOverlay)
-            {
-                this.svWhoRepliedOverlayShim(this.$target.closest('form').find('nav.pageNavWrapper'));
-            }
+            this.svWhoRepliedOverlayShim();
         },
 
-        update: function()
-        {
-            if (this.svWhoRepliedGetPagenavWrapper())
-            {
-                var existingFilterText = this.options.svWhorepliedExistingFilterText,
-                    existingFilterPrefix = this.options.svWhorepliedExistingFilterPrefix,
-                    currentFilterText = this.$input.val(),
-                    currentFilterPrefix = this.$prefix.is(':checked');
-
-                this._updateStoredValue(currentFilterText, currentFilterPrefix);
-
-                if (currentFilterText !== '' &&
-                    currentFilterText === existingFilterText &&
-                    currentFilterPrefix === existingFilterPrefix
-                )
-                {
-                    this._applyFilter(this._getSearchRows(), existingFilterText, existingFilterPrefix);
-                    this._toggleFilterHide(true);
-
-                    return;
-                }
-            }
-
-            this.svWhoReplied_update();
-        },
-
-        _updateStoredValue: function(val, prefix)
-        {
-            this.svWhoReplied__updateStoredValue(val, prefix);
-
-            if (this.inOverlay)
-            {
-                return;
-            }
-
-            var finalUrl = new Url(window.location.href);
-
-            if (val === '')
-            {
-                if ("_xfFilter[text]" in finalUrl.query)
-                {
-                    delete finalUrl.query["_xfFilter[text]"];
-                }
-                if ("_xfFilter[prefix]" in finalUrl.query)
-                {
-                    delete finalUrl.query["_xfFilter[prefix]"];
-                }
-            }
-            else
-            {
-                finalUrl.query["_xfFilter[text]"] = val;
-                finalUrl.query["_xfFilter[prefix]"] = prefix === true ? 1 : 0;
-            }
-
-            finalUrl = decodeURIComponent(finalUrl.toString());
-
-            if ('pushState' in window.history)
-            {
-                window.history.pushState({
-                    state: 1,
-                    rand: Math.random()
-                }, '', finalUrl);
-            }
-            else
-            {
-                window.location = finalUrl; // force
-            }
-        },
-
+        /**
+         *
+         *
+         * @param {String} text
+         * @param {Boolean} prefix
+         *
+         * @private
+         */
         _filterAjax: function(text, prefix)
         {
-            this.svWhoReplied__filterAjax(text, prefix);
-
-            if (this.svWhoRepliedGetPagenavWrapper())
+            // this will be null if not used with who replied
+            var currentPage = this.svWhoRepliedGetCurrentPage();
+            if (!currentPage)
             {
-                if (!text.length)
-                {
-                    XF.ajax('GET', this.options.ajax, {
-                        _xfFilter: {
-                            text: text,
-                            prefix: prefix ? 1 : 0
-                        }
-                    }, XF.proxy(this, 'svWhoRepliedMasked_filterAjaxResponse'));
-                }
-            }
-        },
-
-        svWhoRepliedMasked_filterAjaxResponse: function(result)
-        {
-            if (!this.svWhoRepliedGetPagenavWrapper())
-            {
+                this.svWhoReplied__filterAjax(text, prefix);
                 return;
             }
 
-            this.xhrFilterOriginal = this.xhrFilter;
-            this.xhrFilter = {
-                text: '',
-                prefix: 0
+            var data = {
+                _xfFilter: {
+                    text: text,
+                    prefix: prefix ? 1 : 0,
+                    page: currentPage
+                }
             };
 
-            this._filterAjaxResponse(result);
-
-            this.xhrFilter = this.xhrFilterOriginal;
+            this.xhrFilter = { text: text, prefix: prefix, page: currentPage };
+            XF.ajax('GET', this.options.ajax, data, XF.proxy(this, '_filterAjaxResponse'));
         },
 
         _filterAjaxResponse: function(result)
         {
             this.svWhoReplied__filterAjaxResponse(result);
 
-            this.svWhoRepliedUpdatePagination(result);
-        },
-
-        svWhoRepliedUpdatePagination: function (result)
-        {
             var oldPageNavWrapper = this.svWhoRepliedGetPagenavWrapper();
             if (!oldPageNavWrapper)
             {
@@ -166,24 +86,118 @@ SV.WhoReplied = SV.WhoReplied || {};
             }
 
             oldPageNavWrapper.html(newPageNavWrapper.html());
-            if (this.inOverlay)
+            this.svWhoRepliedOverlayShim();
+        },
+
+        /**
+         * @returns {Object}
+         *
+         * @private
+         */
+        _getStoredValue: function()
+        {
+            var storedValue = this.svWhoReplied__getStoredValue();
+
+            if (storedValue && typeof storedValue === 'object')
             {
-                this.svWhoRepliedOverlayShim(oldPageNavWrapper);
+                var data = this._readFromStorage();
+                if (data[this.storageKey])
+                {
+                    var record = data[this.storageKey],
+                        tsSaved = record.saved || 0,
+                        tsNow = Math.floor(new Date().getTime() / 1000);
+
+                    if (tsSaved + this.storageCutOff >= tsNow)
+                    {
+                        storedValue.page = parseInt(record.page) || 1;
+                    }
+                }
+            }
+
+            return storedValue;
+        },
+
+        filter: function(text, prefix)
+        {
+            var page = this.svWhoRepliedGetCurrentPage();
+            if (page === null)
+            {
+                this.svWhoReplied_filter(text, prefix);
+
+                return;
+            }
+
+            this._updateStoredValue(text, prefix);
+            this._toggleFilterHide(text.length > 0 && !this.svWhoRepliedPageChanged);
+
+            if (this.options.ajax)
+            {
+                this._filterAjax(text, prefix);
+            }
+            else
+            {
+                var matched = this._applyFilter(this._getSearchRows(), text, prefix);
+                this._toggleNoResults(matched === 0);
             }
         },
 
-        svWhoRepliedOverlayShim: function($nav) {
-            $nav.find('.pageNav a[href]').each(
-                function () {
-                    $(this).addClass('js-overlayClose');
-                    $(this).attr('data-xf-click', 'overlay');
-                }
-            );
-            XF.activate($nav);
+        svWhoRepliedOverlayShim: function()
+        {
+            if (!this.inOverlay)
+            {
+                return;
+            }
+
+            var $pageNavWrapper = this.svWhoRepliedGetPagenavWrapper();
+            if (!$pageNavWrapper)
+            {
+                return;
+            }
+
+            $pageNavWrapper.find('.pageNav a[href]').on('click', XF.proxy(this, 'svWhoRepliedUpdateCurrentPage'));
+            XF.activate($pageNavWrapper);
         },
 
-        svWhoRepliedGetPagenavWrapper: function()
+        /**
+         * @param {Event} e
+         */
+        svWhoRepliedUpdateCurrentPage: function(e)
         {
+            e.preventDefault();
+
+            var storedValue = this._getStoredValue();
+            if (!storedValue || !(typeof storedValue === 'object'))
+            {
+                storedValue = {
+                    filter: '',
+                    prefix: false
+                };
+            }
+
+            storedValue.page = parseInt($(e.target).text()) || 1;
+            storedValue.saved = Math.floor(new Date().getTime() / 1000);
+
+            this.svWhoRepliedPageChanged = storedValue.page !== this.svWhoRepliedGetCurrentPage();
+            this.svWhoRepliedLastPageSelected = storedValue.page;
+
+            var data = this._readFromStorage();
+            data[this.storageKey] = storedValue;
+            this._writeToStorage(data);
+
+            this.update();
+
+            this.svWhoRepliedPageChanged = false;
+        },
+
+        /**
+         *
+         * @param {Boolean} logNotFound
+         *
+         * @returns {null|{length}|*|jQuery|HTMLElement}
+         */
+        svWhoRepliedGetPagenavWrapper: function(logNotFound)
+        {
+            logNotFound = logNotFound === 'undefined' ? true : logNotFound;
             if (!this.options.svWhorepliedPagenavWrapper)
             {
                 return;
@@ -192,11 +206,48 @@ SV.WhoReplied = SV.WhoReplied || {};
             var oldPageNavWrapper = $(this.options.svWhorepliedPagenavWrapper);
             if (!oldPageNavWrapper.length)
             {
-                console.error('No old pagination wrapper available');
+                if (logNotFound)
+                {
+                    console.error('No old pagination wrapper available');
+                }
+
                 return null;
             }
 
             return oldPageNavWrapper;
+        },
+
+        /**
+         *
+         * @returns {null|number}
+         */
+        svWhoRepliedGetCurrentPage: function ()
+        {
+            if (!this.options.svWhorepliedPagenavWrapper)
+            {
+                return null;
+            }
+
+            var pageNavWrapper = this.svWhoRepliedGetPagenavWrapper(false);
+            if (!pageNavWrapper)
+            {
+                return null;
+            }
+
+            var storedValue = this._getStoredValue()
+            if (!storedValue)
+            {
+                var lastPageSelected = parseInt(this.svWhoRepliedLastPageSelected) || null;
+                if (lastPageSelected)
+                {
+                    return lastPageSelected;
+                }
+
+                return null;
+            }
+
+            return parseInt(storedValue.page) || 1;
         }
     });
-} (jQuery, window, document));
+}
+(jQuery, window, document));

@@ -18,15 +18,23 @@ class Thread extends XFCP_Thread
             return $this->noPermission();
         }
 
-        $page = $this->filterPage($params->page);
-        $perPage = \XF::options()->WhoReplied_usersPerPage;
-
         $linkFilters = [];
 
         $linkFilters['_xfFilter'] = $this->filter('_xfFilter', [
             'text'   => 'str',
-            'prefix' => 'bool'
+            'prefix' => 'bool',
+            'page' => 'uint'
         ]);
+
+        if ($this->request()->exists('_xfFilter'))
+        {
+            $page = $this->filterPage($linkFilters['_xfFilter']['page']);
+        }
+        else
+        {
+            $page = $this->filterPage($params->page);
+        }
+        $perPage = \XF::options()->WhoReplied_usersPerPage;
 
         /** @var UserFinder $userFinder */
         $userFinder = $this->finder('XF:User');
