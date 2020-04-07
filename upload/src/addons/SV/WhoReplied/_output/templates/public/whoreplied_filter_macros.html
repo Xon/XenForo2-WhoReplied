@@ -12,7 +12,9 @@
          data-search-row-group=".contentRow"
 		 data-search-limit=".username"
          data-no-results-format="<div class=&quot;blockMessage js-filterNoResults&quot;>%s</div>"
-		 data-sv-whoreplied-pagenav-wrapper=".block-outer--whoRepliedPageNavWrapper">
+		 data-sv-whoreplied-pagenav-wrapper=".block-outer--whoRepliedPageNavWrapper"
+		 data-sv-whoreplied-existing-filter-text="{$filter.text|for_attr}"
+		 data-sv-whoreplied-existing-filter-prefix="{{ $filter.prefix ? 'true' : 'false' }}">
 		<div class="inputGroup inputGroup--inline inputGroup--joined">
 			<input type="text" class="input js-filterInput" value="{$filter.text}" placeholder="{{ phrase('filter...')|for_attr }}" data-xf-key="{{ phrase('shortcut.filter')|for_attr }}" />
 			<span class="inputGroup-text">

@@ -207,6 +207,21 @@ SV.WhoReplied = SV.WhoReplied || {};
                 storedValue.page = parseInt(this.svWhoRepliedLastPageSelected) || 1;
             }
 
+            if (storedValue.filter === '')
+            {
+                var existingFilterText = this.options.svWhorepliedExistingFilterText;
+                if (typeof existingFilterText === 'string' && existingFilterText !== '')
+                {
+                    storedValue.filter = existingFilterText;
+
+                    var existingFilterPrefix = this.options.svWhorepliedExistingFilterPrefix;
+                    if (typeof existingFilterPrefix === 'boolean')
+                    {
+                        storedValue.prefix = existingFilterPrefix;
+                    }
+                }
+            }
+
             data[storageKey] = storedValue;
             this._writeToStorage(data);
 
