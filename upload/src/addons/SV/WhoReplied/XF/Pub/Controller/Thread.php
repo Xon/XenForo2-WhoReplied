@@ -18,17 +18,16 @@ class Thread extends XFCP_Thread
             return $this->noPermission();
         }
 
-        $linkFilters = [];
-
+        $filters = [];
         if ($this->request()->exists('_xfFilter'))
         {
-            $linkFilters['_xfFilter'] = $this->filter('_xfFilter', [
+            $filters = $this->filter('_xfFilter', [
                 'text'   => 'str',
                 'prefix' => 'bool',
                 'page' => 'uint'
             ]);
 
-            $page = $this->filterPage($linkFilters['_xfFilter']['page']);
+            $page = $this->filterPage($filters['page']);
         }
         else
         {
@@ -42,14 +41,14 @@ class Thread extends XFCP_Thread
         $userFinder->order("ThreadUserPost|{$threadId}.post_count", 'DESC');
         $userFinder->order('user_id');
 
-        if (\array_key_exists('_xfFilter', $linkFilters) && \utf8_strlen($linkFilters['_xfFilter']['text']))
+        if (\array_key_exists('text', $filters) && \utf8_strlen($filters['text']))
         {
             $userFinder->where(
                 $userFinder->columnUtf8('username'),
                 'LIKE',
                 $userFinder->escapeLike(
-                    $linkFilters['_xfFilter']['text'],
-                    $linkFilters['_xfFilter']['prefix'] ? '?%' : '%?%'
+                    $filters['text'],
+                    $filters['prefix'] ? '?%' : '%?%'
                 )
             );
         }
@@ -61,14 +60,16 @@ class Thread extends XFCP_Thread
 
         $this->assertValidPage($page, $perPage, $total, 'thread/who-replied');
 
-        $tmpLinkFilters = $linkFilters;
-        if (\array_key_exists('_xfFilter', $tmpLinkFilters))
+        unset($filters['page']);
+
+        $linkFilters = [];
+        if (\array_key_exists('text', $filters))
         {
-            unset($tmpLinkFilters['_xfFilter']['page']);
-            $tmpLinkFilters['page'] = $page;
+            $linkFilters['_xfFilter'] = $filters;
         }
-        $finalUrl = $this->buildLink('full:threads/who-replied', $thread, $tmpLinkFilters);
-        unset($tmpLinkFilters);
+        $finalUrl = $this->buildLink('full:threads/who-replied', $thread, $linkFilters);
+
+        $addParamsToPageNav = $this->filter('_xfWithData', 'bool');
 
         $viewParams = [
             'thread' => $thread,
@@ -79,7 +80,10 @@ class Thread extends XFCP_Thread
             'page'    => $page,
             'perPage' => $perPage,
 
+            'addParamsToPageNav' => $addParamsToPageNav,
             'linkFilters' => $linkFilters,
+
+            'filter' => $filters,
             'finalUrl' => $finalUrl
         ];
 

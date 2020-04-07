@@ -29,7 +29,8 @@
 								perpage="{$perPage}"
 								total="{$total}"
 								link="threads/who-replied"
-								data="{$thread}" />
+								data="{$thread}"
+								params="{{ $addParamsToPageNav ? $linkFilters : [] }}" />
 				</div>
 			</div>
 			<xf:macro template="whoreplied_filter_macros"
@@ -37,6 +38,7 @@
 					  arg-key="users"
 					  arg-ajax="{{ link('threads/who-replied', $thread) }}"
 					  arg-class="block-outer-opposite"
+					  arg-filter="{$filter}"
 			/>
 		</div>
 		
@@ -75,7 +77,8 @@
 						perpage="{$perPage}"
 						total="{$total}"
 						link="threads/who-replied"
-						data="{$thread}" />
+						data="{$thread}"
+						params="{{ $addParamsToPageNav ? $linkFilters : [] }}"/>
 		</div>
 	<xf:else />
 		<div class="blockMessage">{{ phrase('no_records_matched') }}</div>

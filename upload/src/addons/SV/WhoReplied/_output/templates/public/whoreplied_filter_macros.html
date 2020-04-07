@@ -1,4 +1,4 @@
-<xf:macro name="quick_filter" arg-key="" arg-ajax="" arg-class="" arg-input="{{ [] }}">
+<xf:macro name="quick_filter" arg-key="" arg-ajax="" arg-class="" arg-filter="{{ [] }}">
     <xf:js src="xf/filter.js" min="1" />
 	<xf:js src="sv/vendor/domurl/url.js" addon="SV/WhoReplied" min="1" />
 	<xf:js src="sv/whoreplied/xf/filter.js" addon="SV/WhoReplied" min="1" />
@@ -12,14 +12,12 @@
          data-search-row-group=".contentRow"
 		 data-search-limit=".username"
          data-no-results-format="<div class=&quot;blockMessage js-filterNoResults&quot;>%s</div>"
-		 data-sv-whoreplied-pagenav-wrapper=".block-outer--whoRepliedPageNavWrapper"
-		 data-sv-whoreplied-existing-filter-text="{$input.text|for_attr}"
-		 data-sv-whoreplied-existing-filter-prefix="{{ $input.prefix ? 'true' : 'false' }}">
+		 data-sv-whoreplied-pagenav-wrapper=".block-outer--whoRepliedPageNavWrapper">
 		<div class="inputGroup inputGroup--inline inputGroup--joined">
-			<input type="text" class="input js-filterInput" value="{$input.text}" placeholder="{{ phrase('filter...')|for_attr }}" data-xf-key="{{ phrase('shortcut.filter')|for_attr }}" />
+			<input type="text" class="input js-filterInput" value="{$filter.text}" placeholder="{{ phrase('filter...')|for_attr }}" data-xf-key="{{ phrase('shortcut.filter')|for_attr }}" />
 			<span class="inputGroup-text">
 				<xf:checkbox standalone="true">
-					<xf:option class="js-filterPrefix" label="{{ phrase('prefix') }}" checked="{$input.prefix}" />
+					<xf:option class="js-filterPrefix" label="{{ phrase('prefix') }}" checked="{$filter.prefix}" />
 				</xf:checkbox>
 			</span>
 			<i class="inputGroup-text js-filterClear is-disabled" aria-hidden="true"></i>
