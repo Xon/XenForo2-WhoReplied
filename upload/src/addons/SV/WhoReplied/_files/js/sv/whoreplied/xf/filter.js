@@ -150,7 +150,7 @@ SV.WhoReplied = SV.WhoReplied || {};
             oldPageNavWrapper.html(newPageNavWrapper.html());
             this.svWhoRepliedOverlayShim();
 
-            if (!this.inOverlay)
+            if (this.inOverlay)
             {
                 return;
             }
