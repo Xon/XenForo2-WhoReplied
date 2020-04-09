@@ -1,5 +1,7 @@
 {
     "additional_files": [
+        "js/sv/vendor/domurl/LICENSE",
+        "js/sv/vendor/domurl/url.js",
         "js/sv/whoreplied"
     ],
     "minify": [
