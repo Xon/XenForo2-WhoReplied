@@ -275,7 +275,7 @@ SV.WhoReplied = SV.WhoReplied || {};
             }
 
             this._updateStoredValue(text, prefix);
-            this._toggleFilterHide(text.length > 0 && !this.svWhoRepliedPageChanged);
+            this._toggleFilterHide(text.length > 0);
 
             if (this.options.ajax)
             {
