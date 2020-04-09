@@ -141,23 +141,6 @@ SV.WhoReplied = SV.WhoReplied || {};
 
             var $result = $($.parseHTML(result.html.content)),
                 newPageNavWrapper = $result.find(this.options.svWhorepliedPagenavWrapper);
-
-            if (!this.inOverlay)
-            {
-                var finalUrl = $result.find('input[type="hidden"][name="final_url"]').val();
-                if ('pushState' in window.history)
-                {
-                    window.history.pushState({
-                        state: 1,
-                        rand: Math.random()
-                    }, '', finalUrl);
-                }
-                else
-                {
-                    window.location = finalUrl; // force
-                }
-            }
-
             if (!newPageNavWrapper.length)
             {
                 oldPageNavWrapper.empty();
@@ -166,6 +149,37 @@ SV.WhoReplied = SV.WhoReplied || {};
 
             oldPageNavWrapper.html(newPageNavWrapper.html());
             this.svWhoRepliedOverlayShim();
+
+            if (!this.inOverlay)
+            {
+                return;
+            }
+
+            var $finalUrlInput = $result.find('input[type="hidden"][name="final_url"]');
+            if (!$finalUrlInput.length)
+            {
+                console.error('No final URL input was provided.');
+                return;
+            }
+
+            var finalUrl = $finalUrlInput.val();
+            if (!finalUrl)
+            {
+                console.error('No final URL available.');
+                return;
+            }
+
+            if ('pushState' in window.history)
+            {
+                window.history.pushState({
+                    state: 1,
+                    rand: Math.random()
+                }, '', finalUrl);
+            }
+            else
+            {
+                window.location = finalUrl; // force
+            }
         },
 
         /**
