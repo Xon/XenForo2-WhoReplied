@@ -18,57 +18,29 @@ class Thread extends XFCP_Thread
             return $this->noPermission();
         }
 
-        $filters = [];
-        if ($this->request()->exists('_xfFilter'))
-        {
-            $filters = $this->filter('_xfFilter', [
-                'text'   => 'str',
-                'prefix' => 'bool',
-                'page' => 'uint'
-            ]);
+        $filters = $this->getWhoRepliedFilters();
+        $page = $this->filterPage($params['page'] ?? 0);
+        $perPage = (int)(\XF::options()->WhoReplied_usersPerPage ?? 40);
 
-            $page = $this->filterPage($filters['page']);
-        }
-        else
-        {
-            $page = $this->filterPage($params->page);
-        }
-        $perPage = \XF::options()->WhoReplied_usersPerPage;
+        /** @var UserFinder $finder */
+        $finder = $this->finder('XF:User')
+                       ->with("ThreadUserPost|{$threadId}", true)
+                       ->order("ThreadUserPost|{$threadId}.post_count", 'DESC')
+                       ->order('user_id')
+                       ->limitByPage($page, $perPage);
+        $this->applyWhoRepliedFilters($finder, $filters);
 
-        /** @var UserFinder $userFinder */
-        $userFinder = $this->finder('XF:User');
-        $userFinder->with("ThreadUserPost|{$threadId}", true);
-        $userFinder->order("ThreadUserPost|{$threadId}.post_count", 'DESC');
-        $userFinder->order('user_id');
-
-        if (\array_key_exists('text', $filters) && \utf8_strlen($filters['text']))
-        {
-            $userFinder->where(
-                $userFinder->columnUtf8('username'),
-                'LIKE',
-                $userFinder->escapeLike(
-                    $filters['text'],
-                    $filters['prefix'] ? '?%' : '%?%'
-                )
-            );
-        }
-
-        $userFinder->limitByPage($page, $perPage);
-
-        $total = $userFinder->total();
-        $users = $userFinder->fetch();
-
-        $this->assertValidPage($page, $perPage, $total, 'thread/who-replied');
-
-        unset($filters['page']);
-
+        $total = $finder->total();
         $linkFilters = [];
-        if (\array_key_exists('text', $filters))
+        if (count($filters) !== 0)
         {
             $linkFilters['_xfFilter'] = $filters;
         }
-        $finalUrl = $this->buildLink('full:threads/who-replied', $thread, $linkFilters);
+        $this->assertValidPage($page, $perPage, $total, 'thread/who-replied', $linkFilters);
 
+        $users = $finder->fetch();
+
+        $finalUrl = $this->buildLink('full:threads/who-replied', $thread, $linkFilters);
         $addParamsToPageNav = $this->filter('_xfWithData', 'bool');
 
         $viewParams = [
@@ -84,9 +56,48 @@ class Thread extends XFCP_Thread
             'linkFilters' => $linkFilters,
 
             'filter' => $filters,
-            'finalUrl' => $finalUrl
+            'finalUrl' => $finalUrl,
         ];
 
         return $this->view('XF:Thread\WhoReplied', 'whoreplied_list', $viewParams);
+    }
+
+    protected function getWhoRepliedFilters(): array
+    {
+        if ($this->request()->exists('_xfFilter'))
+        {
+            return $this->filter('_xfFilter', [
+                'text'   => 'str',
+                'prefix' => 'bool',
+            ]);
+        }
+
+        return [];
+    }
+
+    protected function applyWhoRepliedFilters(UserFinder $finder, array &$filters)
+    {
+        if (strlen($filters['text'] ?? '') !== 0)
+        {
+            $hasPrefixSearch = (bool)($filters['prefix']  ?? true);
+            if (!$hasPrefixSearch)
+            {
+                unset($filters['prefix']);
+            }
+
+            $finder->where(
+                $finder->columnUtf8('username'),
+                'LIKE',
+                $finder->escapeLike(
+                    $filters['text'],
+                    $hasPrefixSearch ? '?%' : '%?%'
+                )
+            );
+        }
+        else
+        {
+            unset($filters['text']);
+            unset($filters['prefix']);
+        }
     }
 }

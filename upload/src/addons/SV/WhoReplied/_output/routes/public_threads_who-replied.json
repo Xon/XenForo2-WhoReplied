@@ -1,0 +1,11 @@
+{
+    "route_type": "public",
+    "route_prefix": "threads",
+    "sub_name": "who-replied",
+    "format": ":int<thread_id,title>/who-replied",
+    "build_class": "",
+    "build_method": "",
+    "controller": "XF:Thread",
+    "context": "forums",
+    "action_prefix": ""
+}

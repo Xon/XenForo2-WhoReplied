@@ -11,8 +11,6 @@
 
 <xf:breadcrumb source="{{ $thread.getBreadcrumbs() }}" />
 
-<xf:css src="whoreplied.less" />
-
 <div class="blockMessage">
 	<dl class="pairs pairs--inline">
 		<dt>{{ phrase('thread') }}</dt>
@@ -20,11 +18,11 @@
 	</dl>
 </div>
 
-<div class="block">
+<div class="block sv-quick-filter">
 	<xf:if is="$users is not empty">
 		<div class="block-outer">
 			<div class="block-outer-main">
-				<div class="block-outer block-outer--after block-outer--whoRepliedPageNavWrapper">
+				<div class="block-outer block-outer--after block-outer--page-nav-wrapper">
 					<xf:pagenav page="{$page}"
 								perpage="{$perPage}"
 								total="{$total}"
@@ -33,8 +31,7 @@
 								params="{{ $addParamsToPageNav ? $linkFilters : [] }}" />
 				</div>
 			</div>
-			<xf:macro template="whoreplied_filter_macros"
-					  name="quick_filter"
+			<xf:macro template="svStandardLib_macros" name="dynamic_quick_filter"
 					  arg-key="users"
 					  arg-ajax="{{ link('threads/who-replied', $thread) }}"
 					  arg-class="block-outer-opposite"
@@ -72,7 +69,7 @@
 			</div>
 		</div>
 
-		<div class="block-outer block-outer--after block-outer--whoRepliedPageNavWrapper">
+		<div class="block-outer block-outer--after block-outer--page-nav-wrapper">
 			<xf:pagenav page="{$page}"
 						perpage="{$perPage}"
 						total="{$total}"
