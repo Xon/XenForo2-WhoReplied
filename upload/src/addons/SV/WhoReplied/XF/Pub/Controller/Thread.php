@@ -40,7 +40,7 @@ class Thread extends XFCP_Thread
 
         $users = $finder->fetch();
 
-        $finalUrl = $this->buildLink('full:threads/who-replied', $thread, $linkFilters + ['page' => $page]);
+        $finalUrl = $this->buildLink('full:threads/who-replied', $thread, $linkFilters + ($page > 1 ? ['page' => $page] : []));
         $addParamsToPageNav = $this->filter('_xfWithData', 'bool');
 
         $viewParams = [
