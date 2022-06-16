@@ -8,11 +8,11 @@ namespace SV\WhoReplied\XF\Entity;
 class Thread extends XFCP_Thread
 {
     /**
-     * @param string|null $error
+     * @param \XF\Phrase|string|null $error
      * @return bool
      * @noinspection PhpUnusedParameterInspection
      */
-    public function canViewWhoReplied($error = null)
+    public function canViewWhoReplied($error = null): bool
     {
         $visitor = \XF::visitor();
 

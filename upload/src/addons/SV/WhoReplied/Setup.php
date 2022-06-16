@@ -2,7 +2,6 @@
 
 namespace SV\WhoReplied;
 
-use XF\Entity\User;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;

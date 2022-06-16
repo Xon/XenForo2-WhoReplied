@@ -1,5 +1,6 @@
 {
     "icon": "fa-users",
     "display_order": 1000,
+    "advanced": false,
     "debug_only": false
 }
