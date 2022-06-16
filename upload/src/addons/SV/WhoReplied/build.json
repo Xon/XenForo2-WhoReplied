@@ -1,9 +1,0 @@
-{
-    "additional_files": [
-        "js/sv/vendor/domurl",
-        "js/sv/whoreplied"
-    ],
-    "minify": [
-        "js/sv/whoreplied/xf/filter.js"
-    ]
-}
