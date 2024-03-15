@@ -12,7 +12,7 @@
     "require" : {
         "php": ["7.0.0", "PHP 7.0.0+"],
         "XF": [2020070, "XenForo 2.2.0+"],
-        "SV/StandardLib": [1120000,"Standard Library by Xon v1.12.0+"]
+        "SV/StandardLib": [2001190500,"Standard Library by Xon v1.19.5+"]
     },
     "icon": "fa-users"
 }

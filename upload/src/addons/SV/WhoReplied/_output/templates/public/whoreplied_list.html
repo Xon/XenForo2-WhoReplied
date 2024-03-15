@@ -20,9 +20,12 @@
 
 <div class="block sv-quick-filter">
 	<xf:if is="$users is not empty">
+        <xf:js src="sv/vendor/domurl/url.js" addon="SV/StandardLib" min="1" />
+        <xf:js src="sv/whoreplied/dropdown_submit.js" min="1" addon="SV/WhoReplied" />
+
 		<div class="block-outer">
 			<div class="block-outer-main">
-				<div class="block-outer block-outer--after block-outer--page-nav-wrapper">
+				<div class="block-outer block-outer--after block-outer--page-nav-wrapper" style="display:inline-block;">
 					<xf:pagenav page="{$page}"
 								perpage="{$perPage}"
 								total="{$total}"
@@ -30,6 +33,22 @@
 								data="{$thread}"
 								params="{{ $addParamsToPageNav ? $linkFilters : [] }}" />
 				</div>
+                <div class="block-outer block-outer--after block-outer--page-nav-wrapper" style="display:inline-block;">
+                    <xf:form ajax="1"
+                             data-submit-url="{{ link('threads/who-replied', $thread, $addParamsToPageNav ? $linkFilters : []) }}"
+                    >
+                        <div class="inputGroup">
+                            <span class="inputGroup-text">{{ phrase('whoreplied_users_per_page:') }}</span>
+                            <xf:select name="per_page" value="{$perPage}" class="input--inline input--autoSize"
+                                       data-xf-init="sv-whoreplied-dropdown-submit"
+                            >
+                                <xf:foreach loop="$perPageChoices" value="$perPageChoice">
+                                    <xf:option value="{$perPageChoice}">{$perPageChoice}</xf:option>
+                                </xf:foreach>
+                            </xf:select>
+                        </div>
+                    </xf:form>
+                </div>
 			</div>
 			<xf:macro template="svStandardLib_macros" name="dynamic_quick_filter"
 					  arg-key="users"
@@ -38,7 +57,7 @@
 					  arg-filter="{$filter}"
 			/>
 		</div>
-		
+
 		<div class="block-container">
 			<div class="block-body userList">
 				<xf:set var="$canSearch" value="{{ $xf.visitor.canSearch() }}" />
@@ -80,6 +99,6 @@
 	<xf:else />
 		<div class="blockMessage">{{ phrase('no_records_matched') }}</div>
 	</xf:if>
-	
+
 	<xf:hiddenval name="final_url" value="{$finalUrl}" />
 </div>

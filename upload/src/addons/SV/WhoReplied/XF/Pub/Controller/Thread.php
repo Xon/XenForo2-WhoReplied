@@ -7,9 +7,15 @@ use XF\Mvc\ParameterBag;
 
 class Thread extends XFCP_Thread
 {
-    public function actionWhoReplied(ParameterBag $params)
+    /**
+     * @param ParameterBag $params
+     * @return \XF\Mvc\Reply\AbstractReply
+     * @throws \XF\Mvc\Reply\Exception
+     */
+    public function actionWhoReplied(ParameterBag $params): \XF\Mvc\Reply\AbstractReply
     {
         $threadId = $params->get('thread_id');
+
         /** @var \SV\WhoReplied\XF\Entity\Thread $thread */
         $thread = $this->assertViewableThread($threadId, $this->getThreadViewExtraWith());
 
@@ -20,12 +26,23 @@ class Thread extends XFCP_Thread
 
         $filters = $this->getWhoRepliedFilters();
         $page = $this->filterPage($params['page'] ?? 0);
-        $perPage = (int)(\XF::options()->WhoReplied_usersPerPage ?? 40);
+
+        $perPageChoices = \XF::options()->svWhoReplied_usersPerPageChoices ?? [40];
+        if (empty($perPageChoices))
+        {
+            $perPageChoices = [40];
+        }
+
+        $perPage = $this->filter('per_page', 'uint');
+        if (!in_array($perPage, $perPageChoices))
+        {
+            $perPage = reset($perPageChoices);
+        }
 
         /** @var UserFinder $finder */
         $finder = $this->finder('XF:User')
-                       ->with("ThreadUserPost|{$threadId}", true)
-                       ->order("ThreadUserPost|{$threadId}.post_count", 'DESC')
+                       ->with('ThreadUserPost|' . $threadId, true)
+                       ->order("ThreadUserPost|$threadId.post_count", 'DESC')
                        ->order('user_id')
                        ->limitByPage($page, $perPage);
         $this->applyWhoRepliedFilters($finder, $filters);
@@ -36,11 +53,21 @@ class Thread extends XFCP_Thread
         {
             $linkFilters['_xfFilter'] = $filters;
         }
-        $this->assertValidPage($page, $perPage, $total, 'thread/who-replied', $linkFilters);
+        $this->assertValidPage(
+            $page,
+            $perPage,
+            $total,
+            'thread/who-replied',
+            $linkFilters
+        );
 
         $users = $finder->fetch();
 
-        $finalUrl = $this->buildLink('full:threads/who-replied', $thread, $linkFilters + ($page > 1 ? ['page' => $page] : []));
+        $finalUrl = $this->buildLink(
+            'full:threads/who-replied',
+            $thread,
+            $linkFilters + ($page > 1 ? ['page' => $page] : [])
+        );
         $addParamsToPageNav = $this->filter('_xfWithData', 'bool');
 
         $viewParams = [
@@ -51,6 +78,7 @@ class Thread extends XFCP_Thread
             'total'   => $total,
             'page'    => $page,
             'perPage' => $perPage,
+            'perPageChoices' => $perPageChoices,
 
             'addParamsToPageNav' => $addParamsToPageNav,
             'linkFilters' => $linkFilters,
@@ -58,8 +86,11 @@ class Thread extends XFCP_Thread
             'filter' => $filters,
             'finalUrl' => $finalUrl,
         ];
-
-        return $this->view('XF:Thread\WhoReplied', 'whoreplied_list', $viewParams);
+        return $this->view(
+            'XF:Thread\WhoReplied',
+            'whoreplied_list',
+            $viewParams
+        );
     }
 
     protected function getWhoRepliedFilters(): array
@@ -75,7 +106,7 @@ class Thread extends XFCP_Thread
         return [];
     }
 
-    protected function applyWhoRepliedFilters(UserFinder $finder, array &$filters)
+    protected function applyWhoRepliedFilters(UserFinder $finder, array &$filters): void
     {
         if (strlen($filters['text'] ?? '') !== 0)
         {
