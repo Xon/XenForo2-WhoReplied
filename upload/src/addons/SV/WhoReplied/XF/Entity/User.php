@@ -6,9 +6,9 @@ use XF\Entity\ThreadUserPost;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Extends \XF\Entity\User
+ * @extends \XF\Entity\User
  *
- * @property ThreadUserPost[] ThreadUserPost
+ * @property-read ThreadUserPost[] ThreadUserPost
  */
 class User extends XFCP_User
 {

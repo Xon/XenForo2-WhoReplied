@@ -6,10 +6,11 @@ use XF\Option\AbstractOption;
 use function count;
 use function is_int;
 use function is_string;
+use function sort;
 use function strlen;
 use function strval;
 
-class UsersPerPage extends AbstractOption
+abstract class UsersPerPage extends AbstractOption
 {
     public static function renderOption(\XF\Entity\Option $option, array $htmlParams): string
     {

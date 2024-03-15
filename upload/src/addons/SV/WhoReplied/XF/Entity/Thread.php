@@ -3,7 +3,7 @@
 namespace SV\WhoReplied\XF\Entity;
 
 /**
- * Extends \XF\Entity\Thread
+ * @extends \XF\Entity\Thread
  */
 class Thread extends XFCP_Thread
 {
@@ -12,10 +12,8 @@ class Thread extends XFCP_Thread
      * @return bool
      * @noinspection PhpUnusedParameterInspection
      */
-    public function canViewWhoReplied($error = null): bool
+    public function canViewWhoReplied(&$error = null): bool
     {
-        $visitor = \XF::visitor();
-
-        return $visitor->hasNodePermission($this->node_id, 'whoRepliedView');
+        return \XF::visitor()->hasNodePermission($this->node_id, 'whoRepliedView');
     }
 }

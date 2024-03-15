@@ -4,15 +4,24 @@ namespace SV\WhoReplied\XF\Pub\Controller;
 
 use XF\Finder\User as UserFinder;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\AbstractReply;
+use XF\Mvc\Reply\Exception as ReplyException;
+use function count;
+use function in_array;
+use function reset;
+use function strlen;
 
+/**
+ * @extends \XF\Pub\Controller\Thread
+ */
 class Thread extends XFCP_Thread
 {
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\AbstractReply
-     * @throws \XF\Mvc\Reply\Exception
+     * @return AbstractReply
+     * @throws ReplyException
      */
-    public function actionWhoReplied(ParameterBag $params): \XF\Mvc\Reply\AbstractReply
+    public function actionWhoReplied(ParameterBag $params): AbstractReply
     {
         $threadId = $params->get('thread_id');
 
