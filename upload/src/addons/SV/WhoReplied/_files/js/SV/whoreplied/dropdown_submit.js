@@ -60,10 +60,8 @@ SV.WhoReplied = SV.WhoReplied || {};
 				return;
 			}
 
-			var self = this,
-				formData = XF.getDefaultFormData(this.$form);
-
-            var currentUrl = new Url(window.location.href);
+			var formData = XF.getDefaultFormData(this.$form),
+				currentUrl = new Url(window.location.href);
             currentUrl.query['per_page'] = formData.get('per_page');
 
             var finalUrl = currentUrl.toString();
@@ -79,9 +77,6 @@ SV.WhoReplied = SV.WhoReplied || {};
             {
                 window.location = finalUrl; // force
             }
-
-            // console.log(window.location.href)
-            // console.log(formData.getAll('test'))
 
 			this.xhr = XF.ajax('post', this.href, formData, XF.proxy(this, 'onLoad'));
 		},
