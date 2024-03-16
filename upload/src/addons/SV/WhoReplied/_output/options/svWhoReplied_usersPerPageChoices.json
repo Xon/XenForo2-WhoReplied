@@ -8,7 +8,7 @@
     "validation_class": "SV\\WhoReplied\\Option\\UsersPerPage",
     "validation_method": "verifyOption",
     "advanced": false,
-    "default_value": "[]",
+    "default_value": "[25,50]",
     "relations": {
         "WhoReplied": 10
     }

@@ -36,14 +36,15 @@ class Thread extends XFCP_Thread
         $filters = $this->getWhoRepliedFilters();
         $page = $this->filterPage($params['page'] ?? 0);
 
-        $perPageChoices = \XF::options()->svWhoReplied_usersPerPageChoices ?? [40];
-        if (empty($perPageChoices))
+        $default = [25,50];
+        $perPageChoices = \XF::options()->svWhoReplied_usersPerPageChoices ?? null;
+        if (!is_array($perPageChoices) || count($perPageChoices) === 0)
         {
-            $perPageChoices = [40];
+            $perPageChoices = $default;
         }
 
-        $perPage = $this->filter('per_page', 'uint');
-        if (!in_array($perPage, $perPageChoices))
+        $perPage = (int)$this->filter('per_page', 'uint');
+        if (!in_array($perPage, $perPageChoices, true))
         {
             $perPage = reset($perPageChoices);
         }

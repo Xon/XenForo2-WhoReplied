@@ -39,15 +39,21 @@ abstract class UsersPerPage extends AbstractOption
 
         foreach ($value AS $perPage)
         {
-            if (empty($perPage['value']))
+            $value = (int)$perPage['value'];
+            if ($value === 0)
             {
                 continue;
             }
 
-            $output[] = $perPage['value'];
+            $output[] = $value;
         }
 
         sort($output);
+
+        if (count($output) === 0)
+        {
+            $output = [25, 50];
+        }
 
         $value = $output;
 
