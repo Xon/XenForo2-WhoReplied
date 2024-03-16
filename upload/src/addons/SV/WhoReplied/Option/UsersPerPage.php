@@ -39,7 +39,7 @@ abstract class UsersPerPage extends AbstractOption
 
         foreach ($value AS $perPage)
         {
-            $value = (int)$perPage['value'];
+            $value = is_int($perPage) ? $perPage : (int)$perPage['value'];
             if ($value === 0)
             {
                 continue;
