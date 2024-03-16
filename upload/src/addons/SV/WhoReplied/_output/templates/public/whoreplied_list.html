@@ -33,7 +33,8 @@
 								data="{$thread}"
 								params="{{ $addParamsToPageNav ? $linkFilters : [] }}" />
 				</div>
-                <div class="block-outer block-outer--after block-outer--page-nav-wrapper" style="display:inline-block;">
+				<xf:if is="count($perPageChoice) > 1">
+                <div class="block-outer block-outer--page-nav-wrapper" style="display:inline-block;">
                     <xf:form ajax="1"
                              data-submit-url="{{ link('threads/who-replied', $thread, $addParamsToPageNav ? $linkFilters : []) }}"
                     >
@@ -49,6 +50,7 @@
                         </div>
                     </xf:form>
                 </div>
+				</xf:if>
 			</div>
 			<xf:macro template="svStandardLib_macros" name="dynamic_quick_filter"
 					  arg-key="users"
