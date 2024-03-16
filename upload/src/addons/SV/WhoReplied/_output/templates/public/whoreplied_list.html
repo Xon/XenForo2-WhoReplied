@@ -33,7 +33,7 @@
 								data="{$thread}"
 								params="{{ $addParamsToPageNav ? $linkFilters : [] }}" />
 				</div>
-				<xf:if is="count($perPageChoice) > 1">
+				<xf:if is="count($perPageChoices) > 1">
                 <div class="block-outer block-outer--page-nav-wrapper" style="display:inline-block;">
                     <xf:form ajax="1"
                              data-submit-url="{{ link('threads/who-replied', $thread, $addParamsToPageNav ? $linkFilters : []) }}"
