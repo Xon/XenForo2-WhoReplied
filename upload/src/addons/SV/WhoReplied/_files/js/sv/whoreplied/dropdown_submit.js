@@ -9,7 +9,8 @@ SV.WhoReplied = SV.WhoReplied || {};
 
     SV.WhoReplied.DropdownSubmit = XF.Element.newHandler({
 		options: {
-			submitUrl: ''
+			submitUrl: '',
+            contentWrapper: null,
 		},
 
 		$form: null,
@@ -21,13 +22,19 @@ SV.WhoReplied = SV.WhoReplied || {};
 		init: function()
 		{
 			var $form = this.$target.closest('form'),
-				href = $form.data('submit-url') || this.options.submitUrl || this.$target.attr('href');
+                href = $form.data('submit-url') || this.options.submitUrl || this.$target.attr('href');
 
 			if (!href)
 			{
 				console.error('Form manage must have a href');
 				return;
 			}
+
+            if (!this.options.contentWrapper)
+            {
+                console.error('Target must have a wrapper');
+                return;
+            }
 
 			this.href = href;
 			this.$form = $form;
@@ -61,7 +68,7 @@ SV.WhoReplied = SV.WhoReplied || {};
 			}
 
 			var formData = XF.getDefaultFormData(this.$form),
-				currentUrl = new Url(window.location.href);
+				currentUrl = new Url(this.href);
             currentUrl.query['per_page'] = formData.get('per_page');
 
             var finalUrl = currentUrl.toString();
@@ -81,9 +88,23 @@ SV.WhoReplied = SV.WhoReplied || {};
 			this.xhr = XF.ajax('post', this.href, formData, XF.proxy(this, 'onLoad'));
 		},
 
-		onLoad: function(data)
+		onLoad: function(result)
 		{
 			this.xhr = null;
+
+            var $result = $($.parseHTML(result.html.content)),
+                oldContentWrapper = $(this.options.contentWrapper),
+                self = this
+            ;
+            $result.each(function ()
+            {
+                var newContentWrapper = $(this)
+                if (newContentWrapper.is(self.options.contentWrapper))
+                {
+                    oldContentWrapper.html(newContentWrapper.html());
+                    XF.activate(oldContentWrapper)
+                }
+            })
 		}
 	});
 

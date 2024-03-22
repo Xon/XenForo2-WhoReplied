@@ -1,9 +1,3 @@
-<script class="js-extraPhrases" type="application/json">
-	{
-		"no_items_matched_your_filter": "{{ phrase('no_items_matched_your_filter')|escape('js') }}"
-	}
-</script>
-
 <xf:title page="{$page}">{{ prefix('thread', $thread, 'escaped') }}{$thread.title} - {{ phrase('whoreplied_members_who_replied') }}</xf:title>
 <xf:h1>{{ phrase('whoreplied_members_who_replied') }}</xf:h1>
 
@@ -18,30 +12,44 @@
 	</dl>
 </div>
 
-<div class="block sv-quick-filter">
+<xf:js src="xf/filter.js" min="1" />
+<xf:js src="sv/vendor/domurl/url.js" addon="SV/StandardLib" min="1" />
+<xf:js src="sv/lib/xf/filter.js" addon="SV/StandardLib" min="1" />
+<script class="js-extraPhrases" type="application/json">
+    {
+        "no_items_matched_your_filter": "{{ phrase('no_items_matched_your_filter')|escape('js') }}"
+    }
+</script>
+<xf:css src="sv_quick_filter.less" />
+
+<div class="block sv-quick-filter" data-xf-init="sv-dynamic-filter"
+     data-key="users"
+     data-global-find="{{ false }}"
+     data-ajax="{{ link('threads/who-replied', $thread, {'per_page': $perPage}) }}"
+     data-content-wrapper=".block-body--whoRepliedBody"
+     data-page-nav-wrapper=".block-outer--page-nav-wrapper">
 	<xf:if is="$users is not empty">
         <xf:js src="sv/vendor/domurl/url.js" addon="SV/StandardLib" min="1" />
         <xf:js src="sv/whoreplied/dropdown_submit.js" min="1" addon="SV/WhoReplied" />
 
 		<div class="block-outer">
 			<div class="block-outer-main">
-				<div class="block-outer block-outer--after block-outer--page-nav-wrapper" style="display:inline-block;">
-					<xf:pagenav page="{$page}"
-								perpage="{$perPage}"
-								total="{$total}"
-								link="threads/who-replied"
-								data="{$thread}"
-								params="{{ $addParamsToPageNav ? $linkFilters : [] }}" />
-				</div>
+                <div class="whoreplied-pagenav whoreplied-pagenav--top" style="display:inline-block;">
+                    <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+                                link="threads/who-replied"
+                                data="{$thread}"
+                                params="{{ ($addParamsToPageNav ? $linkFilters : []) + {'per_page': $perPage} }}"
+                                wrapperclass="block-outer block-outer--after block-outer--page-nav-wrapper" />
+                </div>
+
 				<xf:if is="count($perPageChoices) > 1">
-                <div class="block-outer block-outer--page-nav-wrapper" style="display:inline-block;">
-                    <xf:form ajax="1"
-                             data-submit-url="{{ link('threads/who-replied', $thread, $addParamsToPageNav ? $linkFilters : []) }}"
-                    >
+                <div class="block-outer" style="display:inline-block;">
+                    <xf:form ajax="1" data-submit-url="{$finalUrl}">
                         <div class="inputGroup">
                             <span class="inputGroup-text">{{ phrase('whoreplied_users_per_page:') }}</span>
                             <xf:select name="per_page" value="{$perPage}" class="input--inline input--autoSize"
                                        data-xf-init="sv-whoreplied-dropdown-submit"
+                                       data-content-wrapper=".sv-quick-filter"
                             >
                                 <xf:foreach loop="$perPageChoices" value="$perPageChoice">
                                     <xf:option value="{$perPageChoice}">{$perPageChoice}</xf:option>
@@ -52,16 +60,22 @@
                 </div>
 				</xf:if>
 			</div>
-			<xf:macro template="svStandardLib_macros" name="dynamic_quick_filter"
-					  arg-key="users"
-					  arg-ajax="{{ link('threads/who-replied', $thread) }}"
-					  arg-class="block-outer-opposite"
-					  arg-filter="{$filter}"
-			/>
+
+            <div class="block-outer-opposite quickFilter u-jsOnly">
+                <div class="inputGroup inputGroup--inline inputGroup--joined">
+                    <input type="text" class="input js-filterInput" value="{$filter.text}" placeholder="{{ phrase('filter...')|for_attr }}" data-xf-key="{{ phrase('shortcut.filter')|for_attr }}" />
+                    <span class="inputGroup-text">
+				<xf:checkbox standalone="true">
+					<xf:option class="js-filterPrefix" label="{{ phrase('prefix') }}" checked="{$filter.prefix}" />
+				</xf:checkbox>
+			</span>
+                    <i class="inputGroup-text js-filterClear is-disabled" aria-hidden="true"></i>
+                </div>
+            </div>
 		</div>
 
 		<div class="block-container">
-			<div class="block-body userList">
+			<div class="block-body userList block-body--whoRepliedBody">
 				<xf:set var="$canSearch" value="{{ $xf.visitor.canSearch() }}" />
 				<xf:foreach loop="$users" key="$userId" value="$user">
 					<li class="block-row block-row--separated userList-row js-filterSearchable">
@@ -90,14 +104,13 @@
 			</div>
 		</div>
 
-		<div class="block-outer block-outer--after block-outer--page-nav-wrapper">
-			<xf:pagenav page="{$page}"
-						perpage="{$perPage}"
-						total="{$total}"
-						link="threads/who-replied"
-						data="{$thread}"
-						params="{{ $addParamsToPageNav ? $linkFilters : [] }}"/>
-		</div>
+        <div class="whoreplied-pagenav whoreplied-pagenav--bottom">
+            <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+                        link="threads/who-replied"
+                        data="{$thread}"
+                        params="{{ ($addParamsToPageNav ? $linkFilters : []) + {'per_page': $perPage} }}"
+                        wrapperclass="block-outer block-outer--after block-outer--page-nav-wrapper" />
+        </div>
 	<xf:else />
 		<div class="blockMessage">{{ phrase('no_records_matched') }}</div>
 	</xf:if>

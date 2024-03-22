@@ -49,6 +49,12 @@ class Thread extends XFCP_Thread
             $perPage = reset($perPageChoices);
         }
 
+//        if ($this->filter('_xfWithData', 'bool'))
+//        {
+//            \XF::dumpSimple($this->filter('per_page', 'uint'));
+//            die();
+//        }
+
         /** @var UserFinder $finder */
         $finder = $this->finder('XF:User')
                        ->with('ThreadUserPost|' . $threadId, true)
@@ -61,8 +67,14 @@ class Thread extends XFCP_Thread
         $linkFilters = [];
         if (count($filters) !== 0)
         {
+            if ($perPage !== reset($default))
+            {
+                $filters['per_page'] = $perPage;
+            }
+
             $linkFilters['_xfFilter'] = $filters;
         }
+
         $this->assertValidPage(
             $page,
             $perPage,
@@ -108,8 +120,8 @@ class Thread extends XFCP_Thread
         if ($this->request()->exists('_xfFilter'))
         {
             return $this->filter('_xfFilter', [
-                'text'   => 'str',
-                'prefix' => 'bool',
+                'text'     => 'str',
+                'prefix'   => 'bool'
             ]);
         }
 
