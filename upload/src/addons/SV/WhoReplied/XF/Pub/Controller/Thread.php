@@ -67,12 +67,12 @@ class Thread extends XFCP_Thread
         $linkFilters = [];
         if (count($filters) !== 0)
         {
-            if ($perPage !== reset($default))
-            {
-                $filters['per_page'] = $perPage;
-            }
-
             $linkFilters['_xfFilter'] = $filters;
+        }
+
+        if ($perPage !== reset($perPageChoices))
+        {
+            $linkFilters['per_page'] = $perPage;
         }
 
         $this->assertValidPage(
