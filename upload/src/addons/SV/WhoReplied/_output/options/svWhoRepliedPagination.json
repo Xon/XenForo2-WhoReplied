@@ -1,0 +1,13 @@
+{
+    "edit_format": "radio",
+    "edit_format_params": "standard={{ phrase('svWhoReplied_standard_pagination') }}\najax={{ phrase('svWhoReplied_ajax_pagination') }}\najax_filter={{ phrase('svWhoReplied_ajax_pagination_with_filter') }}",
+    "data_type": "string",
+    "sub_options": [],
+    "validation_class": "",
+    "validation_method": "",
+    "advanced": false,
+    "default_value": "ajax_filter",
+    "relations": {
+        "WhoReplied": 1
+    }
+}

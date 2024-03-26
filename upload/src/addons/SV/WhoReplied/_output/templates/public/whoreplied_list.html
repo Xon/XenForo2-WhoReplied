@@ -12,17 +12,37 @@
     </dl>
 </div>
 
-<xf:js src="xf/filter.js" min="1" />
-<xf:js src="sv/vendor/domurl/url.js" addon="SV/StandardLib" min="1" />
-<xf:js src="sv/lib/xf/filter.js" addon="SV/StandardLib" min="1" />
-<script class="js-extraPhrases" type="application/json">
-    {
-        "no_items_matched_your_filter": "{{ phrase('no_items_matched_your_filter')|escape('js') }}"
-    }
-</script>
-<xf:css src="sv_quick_filter.less" />
+<xf:set var="$paginationSetting" value="{{ ($xf.options.svWhoRepliedPagination ?: 'ajax_filter')}}" />
+<xf:set var="$useDropdownSubmit" value="{{ count($perPageChoices) > 1 }}" />
 
-<div class="block sv-quick-filter" data-xf-init="sv-dynamic-filter"
+<xf:js src="sv/vendor/domurl/url.js" addon="SV/StandardLib" min="1" />
+<xf:if is="$paginationSetting == 'standard' && $useDropdownSubmit">
+    <xf:js src="sv/lib/dropdownSubmit.js" addon="SV/StandardLib" min="1" />
+<xf:elseif is="$paginationSetting == 'ajax'" />
+    <xf:js src="sv/lib/ajaxPagination.js" addon="SV/StandardLib" min="1" />
+<xf:elseif is="$paginationSetting == 'ajax_filter'" />
+    <xf:js src="xf/filter.js" min="1" />
+    <xf:js src="sv/lib/xf/filter.js" addon="SV/StandardLib" min="1" />
+
+    <script class="js-extraPhrases" type="application/json">
+        {
+            "no_items_matched_your_filter": "{{ phrase('no_items_matched_your_filter')|escape('js') }}"
+        }
+    </script>
+    <xf:css src="sv_quick_filter.less" />
+</xf:if>
+
+<xf:set var="$xfInit"><xf:trim>
+    <xf:if is="$paginationSetting == 'standard' && $useDropdownSubmit">
+        sv-dropdown-submit
+    <xf:elseif is="$paginationSetting == 'ajax'" />
+        sv-ajax-pagination
+    <xf:elseif is="$paginationSetting == 'ajax_filter'" />
+        sv-dynamic-filter
+    </xf:if>
+</xf:trim></xf:set>
+
+<div class="block sv-quick-filter" data-xf-init="{$xfInit}"
      data-key="users"
      data-global-find="{{ false }}"
      data-ajax="{{ link('threads/who-replied', $thread, {'per_page': $perPage}) }}"
@@ -40,31 +60,33 @@
                                 wrapperclass="block-outer block-outer--after block-outer--page-nav-wrapper" />
                 </div>
 
-                <xf:if is="count($perPageChoices) > 1">
-                <div class="block-outer" style="display:inline-block;">
-                    <div class="inputGroup">
-                        <span class="inputGroup-text">{{ phrase('whoreplied_users_per_page:') }}</span>
-                        <xf:select name="per_page" value="{$perPage}" class="input--inline input--autoSize">
-                            <xf:foreach loop="$perPageChoices" value="$perPageChoice">
-                                <xf:option value="{$perPageChoice}">{$perPageChoice}</xf:option>
-                            </xf:foreach>
-                        </xf:select>
+                <xf:if is="$useDropdownSubmit">
+                    <div class="block-outer" style="display:inline-block;">
+                        <div class="inputGroup">
+                            <span class="inputGroup-text">{{ phrase('whoreplied_users_per_page:') }}</span>
+                            <xf:select name="per_page" value="{$perPage}" class="input--inline input--autoSize">
+                                <xf:foreach loop="$perPageChoices" value="$perPageChoice">
+                                    <xf:option value="{$perPageChoice}">{$perPageChoice}</xf:option>
+                                </xf:foreach>
+                            </xf:select>
+                        </div>
                     </div>
-                </div>
                 </xf:if>
             </div>
 
-            <div class="block-outer-opposite quickFilter u-jsOnly">
-                <div class="inputGroup inputGroup--inline inputGroup--joined">
-                    <input type="text" class="input js-filterInput" value="{$filter.text}" placeholder="{{ phrase('filter...')|for_attr }}" data-xf-key="{{ phrase('shortcut.filter')|for_attr }}" />
-                    <span class="inputGroup-text">
-                        <xf:checkbox standalone="true">
-                            <xf:option class="js-filterPrefix" label="{{ phrase('prefix') }}" checked="{$filter.prefix}" />
-                        </xf:checkbox>
-                    </span>
-                    <i class="inputGroup-text js-filterClear is-disabled" aria-hidden="true"></i>
+            <xf:if is="$paginationSetting == 'ajax_filter'">
+                <div class="block-outer-opposite quickFilter u-jsOnly">
+                    <div class="inputGroup inputGroup--inline inputGroup--joined">
+                        <input type="text" class="input js-filterInput" value="{$filter.text}" placeholder="{{ phrase('filter...')|for_attr }}" data-xf-key="{{ phrase('shortcut.filter')|for_attr }}" />
+                        <span class="inputGroup-text">
+                            <xf:checkbox standalone="true">
+                                <xf:option class="js-filterPrefix" label="{{ phrase('prefix') }}" checked="{$filter.prefix}" />
+                            </xf:checkbox>
+                        </span>
+                        <i class="inputGroup-text js-filterClear is-disabled" aria-hidden="true"></i>
+                    </div>
                 </div>
-            </div>
+            </xf:if>
         </div>
 
         <div class="block-container">

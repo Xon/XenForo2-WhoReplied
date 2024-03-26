@@ -1,0 +1,1 @@
+You can choose the enabled pagination features using this setting.
