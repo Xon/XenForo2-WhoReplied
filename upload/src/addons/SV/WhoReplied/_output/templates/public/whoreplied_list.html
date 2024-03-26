@@ -26,6 +26,7 @@
      data-key="users"
      data-global-find="{{ false }}"
      data-ajax="{{ link('threads/who-replied', $thread, {'per_page': $perPage}) }}"
+     data-per-page-cookie-prefix="svWhoReplied_"
      data-content-wrapper=".block-body--whoRepliedBody"
      data-page-nav-wrapper=".block-outer--page-nav-wrapper">
     <xf:if is="$users is not empty">

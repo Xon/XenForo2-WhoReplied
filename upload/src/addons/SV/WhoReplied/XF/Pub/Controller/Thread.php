@@ -43,7 +43,11 @@ class Thread extends XFCP_Thread
             $perPageChoices = $default;
         }
 
-        $perPage = (int)$this->filter('per_page', 'uint');
+        $perPage = (int)$this->filter(
+            'per_page',
+            'uint',
+            $this->request->getCookie('svWhoReplied_per_page') ?? reset($default)
+        );
         if (!in_array($perPage, $perPageChoices, true))
         {
             $perPage = reset($perPageChoices);
