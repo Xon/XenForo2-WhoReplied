@@ -14,7 +14,7 @@
     },
     "require": {
         "SV/StandardLib": [
-            2001200100,
+            2001200000,
             "Standard Library by Xon v1.20.0+"
         ],
         "XF": [
