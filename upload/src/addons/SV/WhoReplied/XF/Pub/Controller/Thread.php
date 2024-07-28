@@ -60,7 +60,7 @@ class Thread extends XFCP_Thread
 //        }
 
         /** @var UserFinder $finder */
-        $finder = $this->finder('XF:User')
+        $finder = \SV\StandardLib\Helper::finder(\XF\Finder\User::class)
                        ->with('ThreadUserPost|' . $threadId, true)
                        ->order("ThreadUserPost|$threadId.post_count", 'DESC')
                        ->order('user_id')
