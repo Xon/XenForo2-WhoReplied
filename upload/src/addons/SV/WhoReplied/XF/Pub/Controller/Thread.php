@@ -2,6 +2,7 @@
 
 namespace SV\WhoReplied\XF\Pub\Controller;
 
+use SV\StandardLib\Helper;
 use XF\Finder\User as UserFinder;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
@@ -59,12 +60,11 @@ class Thread extends XFCP_Thread
 //            die();
 //        }
 
-        /** @var UserFinder $finder */
-        $finder = \SV\StandardLib\Helper::finder(\XF\Finder\User::class)
-                       ->with('ThreadUserPost|' . $threadId, true)
-                       ->order("ThreadUserPost|$threadId.post_count", 'DESC')
-                       ->order('user_id')
-                       ->limitByPage($page, $perPage);
+        $finder = Helper::finder(UserFinder::class)
+                        ->with('ThreadUserPost|' . $threadId, true)
+                        ->order("ThreadUserPost|$threadId.post_count", 'DESC')
+                        ->order('user_id')
+                        ->limitByPage($page, $perPage);
         $this->applyWhoRepliedFilters($finder, $filters);
 
         $total = $finder->total();
