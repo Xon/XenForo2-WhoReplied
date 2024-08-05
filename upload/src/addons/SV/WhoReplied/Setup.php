@@ -3,7 +3,7 @@
 namespace SV\WhoReplied;
 
 use SV\StandardLib\Helper;
-use SV\WhoReplied\Option\UsersPerPage;
+use SV\StandardLib\Option\EntriesPerPage;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
@@ -46,7 +46,7 @@ class Setup extends AbstractSetup
             $option->getBehavior('XF:DevOutputWritable')->setOption('write_dev_output', false);
             $option->save();
             // required so the verify function will work later
-            $option->validation_class = UsersPerPage::class;
+            $option->validation_class = EntriesPerPage::class;
             $option->validation_method = 'verifyOption';
             $option->save();
         }
