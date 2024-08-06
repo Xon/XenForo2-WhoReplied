@@ -61,6 +61,8 @@ class Thread extends XFCP_Thread
 //        }
 
         $finder = Helper::finder(UserFinder::class)
+                        ->with('Profile', true)
+                        ->with('Option', true)
                         ->with('ThreadUserPost|' . $threadId, true)
                         ->order("ThreadUserPost|$threadId.post_count", 'DESC')
                         ->order('user_id')
